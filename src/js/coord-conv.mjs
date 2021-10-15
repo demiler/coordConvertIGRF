@@ -18,7 +18,7 @@ class CoordConv extends LitElement {
 
   constructor() {
     super();
-    this.tab = "ttg";
+    this.tab = "tte";
   }
 
   render() {
@@ -30,13 +30,12 @@ class CoordConv extends LitElement {
         <div id="ttg" ?current=${this.tab === "ttg"}>TLE to GEO</div>
       </nav>
 
-      <lit-transition-demo></lit-transition-demo>
-
       <div id="content">
-        ${transition(this.renderTab(), slide({x:'300px'}))}
+        ${this.renderTab()}
       </div>
     `;
   }
+        //${transition(this.renderTab(), slide({x:'100px'}))}
 
   renderTab() {
     switch (this.tab) {

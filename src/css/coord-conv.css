@@ -6,7 +6,7 @@
 
 :host {
   display: block;
-  margin: 20px;
+  padding: 20px;
 }
 
 nav {
@@ -23,6 +23,7 @@ nav div {
   text-align: center;
   user-select: none;
   cursor: pointer;
+  font-size: 1.6rem;
 }
 
 nav div:not(:last-child) {

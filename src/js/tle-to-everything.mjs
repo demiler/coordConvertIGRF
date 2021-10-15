@@ -37,7 +37,9 @@ class TleToEverything extends LitElement {
       </div>
 
       <filters-all
-      ></filtes-all>
+      ></filters-all>
+
+      <button id="conv-btn">Convert to</button>
     `;
   }
 };

@@ -74,3 +74,16 @@ input:focus {
   width: 100%;
   height: 2rem;
 }
+
+#conv-btn {
+  background-color: #cfffbe;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font: inherit;
+  height: 2rem;
+  margin-top: 10px;
+  width: fit-content;
+  font-size: 1.3rem;
+  padding: .3rem 2rem;
+}
