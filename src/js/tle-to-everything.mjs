@@ -17,7 +17,6 @@ class TleToEverything extends LitElement {
 
   render() {
     return html`
-
       <div class='group-label'></div>
       <div class='group-label'>Filters</div>
 
@@ -48,7 +47,7 @@ class TleToEverything extends LitElement {
           <tog-btn id="tle"   >TLE</tog-btn>
         </div>
 
-        <div id="multi">
+        <div id="multi" @update=${({target, detail}) => console.log(target.id, detail)}>
           <multi-btn id="gsm" .labels=${["X","Y","Z"]}      >GSM</multi-btn>
           <multi-btn id="dm"  .labels=${["Lat","Lon","Alt"]}>DM</multi-btn>
           <multi-btn id="geo" .labels=${["X","Y","Z"]}      >GEO</multi-btn>
