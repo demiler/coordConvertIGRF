@@ -1,0 +1,48 @@
+:host {
+  width: inherit;
+  position: relative;
+}
+
+input {
+  box-sizing: border-box;
+
+  border: none;
+  background: #eee;
+
+  padding: 5px 5px 2px 5px;
+  border-bottom: 3px solid #eee;
+  border-radius: 10px;
+
+  font: inherit;
+  width: inherit;
+  height: inherit;
+  text-align: inherit;
+
+  transition: border-color .3s;
+}
+
+:host(:focus-within) input {
+  outline: none;
+  border-color: #87c1ff;
+}
+
+input.error {
+  outline: none;
+  border-color: #f7c1ff;
+}
+
+#date-picker {
+  display: block;
+  opacity: 1;
+  position: absolute;
+  z-index: 2;
+  box-shadow: 0 0 5px 1px var(--color-shadow);
+  top: calc(100% + 20px);
+  left: 0;
+  border-radius: 10px;
+}
+
+#date-picker[hidden] {
+  opacity: 0;
+  z-index: -999;
+}

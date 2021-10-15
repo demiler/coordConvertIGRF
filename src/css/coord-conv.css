@@ -1,34 +1,12 @@
-:host {
+:host * {
   --color-inactive: #ececec;
   --color-active: #b7dbfd;
   --color-shadow: #00000037;
+}
 
+:host {
+  display: block;
   box-sizing: border-box;
-}
-
-#filters {
-  display: flex;
-  gap: 10px;
-}
-
-#single {
-  display: grid;
-  grid-template-columns: repeat(2, 50px);
-  gap: 10px;
-  align-items: center;
-}
-
-#single > * {
-  height: 2rem;
-}
-
-#multi {
-  display: grid;
-  grid-template-columns: 160px 200px;
-  gap: 10px;
-}
-
-#multi > * {
-  --slot-margin: .4rem;
-  --label-size: 1.8rem;
+  margin: 20px;
+  border: 2px solid #aa0000;
 }

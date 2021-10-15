@@ -1,0 +1,105 @@
+:host {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 30px;
+}
+
+@media only screen and (max-width: 800px) {
+  :host {
+    grid-template-columns: 1fr;
+  }
+
+  .group-label:nth-child(1) {
+    display: none;
+  }
+
+  .group-label:nth-child(2) {
+    grid-row: 2;
+    margin-top: 30px;
+    justify-self: center;
+  }
+
+  #filters {
+    justify-self: center;
+  }
+}
+
+input {
+  box-sizing: border-box;
+
+  border: none;
+  background: #eee;
+
+  padding: 5px 5px 2px 5px;
+  border-bottom: 3px solid #eee;
+  border-radius: 10px;
+
+  font: inherit;
+  width: inherit;
+  text-align: inherit;
+
+  transition: border-color .3s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #87c1ff;
+}
+
+#inputs {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  grid-template-rows: 1fr 0 1fr 1fr;
+  gap: 10px;
+  align-items: center;
+  height: 100%;
+}
+
+#inputs #tle {
+  grid-column: 2/4;
+  width: 100%;
+  height: 2rem;
+}
+
+#inputs .range-label {
+  margin-bottom: -10px;
+  margin-top: -10px;
+  padding-top: 10px;
+  color: #424242;
+  font-size: 0.8rem;
+  align-self: self-end;
+}
+
+#inputs date-picker, #inputs time-picker {
+  width: 100%;
+  height: 2rem;
+}
+
+#filters {
+  display: flex;
+  gap: 10px;
+}
+
+#single {
+  display: grid;
+  grid-template-columns: repeat(2, 50px);
+  gap: 10px;
+  align-items: center;
+  align-content: space-between;
+}
+
+#single > * {
+  height: 2rem;
+}
+
+#multi {
+  display: grid;
+  grid-template-columns: 160px 200px;
+  gap: 10px;
+}
+
+#multi > * {
+  --slot-margin: .4rem;
+  --label-size: 1.8rem;
+}
+
