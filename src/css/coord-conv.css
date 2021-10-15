@@ -6,7 +6,29 @@
 
 :host {
   display: block;
-  box-sizing: border-box;
   margin: 20px;
-  border: 2px solid #aa0000;
+}
+
+nav {
+  display: flex;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+nav div {
+  flex: 1;
+  padding: 4px 8px;
+  background-color: var(--color-inactive);
+  text-align: center;
+  user-select: none;
+  cursor: pointer;
+}
+
+nav div:not(:last-child) {
+  border-right: 3px solid #aaa;
+}
+
+nav div[current] {
+  background-color: var(--color-active);
 }

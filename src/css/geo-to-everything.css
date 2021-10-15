@@ -1,0 +1,118 @@
+:host {
+  display: grid;
+  box-sizing: border-box;
+
+  grid-template-columns: 1fr 1fr;
+  column-gap: 30px;
+}
+
+@media only screen and (max-width: 800px) {
+  :host {
+    grid-template-columns: 1fr;
+    row-gap: 30px;
+  }
+
+  #filters {
+    justify-self: center;
+  }
+}
+
+input {
+  box-sizing: border-box;
+
+  border: none;
+  background: #eee;
+
+  padding: 5px 5px 2px 5px;
+  border-bottom: 3px solid #eee;
+  border-radius: 10px;
+
+  font: inherit;
+  width: 100%;
+  text-align: inherit;
+
+  transition: border-color .3s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #87c1ff;
+}
+
+#inputs {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  gap: 10px;
+}
+
+#geo {
+  align-self: self-end;
+  padding-bottom: 5px;
+}
+
+#coord-input {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-column: 2/4;
+  column-gap: 10px;
+}
+
+#coord-input label {
+  font-size: .8rem;
+  color: #444;
+  align-self: self-end;
+  padding-left: .5rem;
+}
+
+date-picker, time-picker {
+  width: 100%;
+  height: 2rem;
+}
+
+button {
+  background-color: #cfffbe;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font: inherit;
+  height: 2rem;
+}
+
+#switch {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 120px;
+}
+
+#track {
+  display: inline-flex;
+  height: 20px;
+  width: 40px;
+  border: 2px solid #d6d6d6;
+  border-radius: 50px;
+  align-items: center;
+  box-sizing: border-box;
+  background: #ececec;
+  cursor: pointer;
+}
+
+#ball {
+  --size: 14px;
+  width: var(--size);
+  height: var(--size);
+  background: #7970ff;
+  border-radius: 50%;
+  transition: .2s;
+  margin-left: 0;
+}
+
+#track[active] #ball {
+  margin-left: calc(100% - var(--size));
+}
+
+#switch svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+

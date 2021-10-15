@@ -7,6 +7,7 @@ import livereload from 'rollup-plugin-livereload';
 import glob from 'glob';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import svg from 'rollup-plugin-svg'
 
 export default {
   input: 'src/index.mjs',
@@ -34,6 +35,7 @@ export default {
     nodeResolve({
       browser: true,
     }),
+    svg(),
     copy({
       flatten: false,
       targets: [

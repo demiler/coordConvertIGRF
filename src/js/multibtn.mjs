@@ -44,7 +44,7 @@ class MultiButton extends LitElement {
 
   sendUpdate() {
     this.dispatchEvent(new CustomEvent('update', 
-      { bubbles: true, detail: this.vals }
+      { composed: true, bubbles: true, cancelable: true, detail: this.vals }
     ))
   }
 
