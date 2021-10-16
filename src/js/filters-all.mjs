@@ -43,15 +43,16 @@ class FiltersAll extends LitElement {
     this.dispatchEvent(new CustomEvent('update', {
       detail: this.filters
     }));
-    this.sendUpdate();
   }
 
   handleSinlge(e) {
+    e.stopPropagation();
     this.filters[e.target.id] = e.value;
     this.sendUpdate();
   }
 
   handleMulti(e) {
+    e.stopPropagation();
     this.filters[e.target.id] = e.detail;
     this.sendUpdate();
   }

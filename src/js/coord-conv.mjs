@@ -18,11 +18,10 @@ class CoordConv extends LitElement {
 
   constructor() {
     super();
-    this.tab = "tte";
+    this.tab = "ttg";
   }
 
   render() {
-
     return html`
       <nav @click=${this.changeTab}>
         <div id="tte" ?current=${this.tab === "tte"}>TLE to everything</div>
@@ -30,8 +29,11 @@ class CoordConv extends LitElement {
         <div id="ttg" ?current=${this.tab === "ttg"}>TLE to GEO</div>
       </nav>
 
-      <div id="content">
+      <div id="content" @convert=${this.askConvert}>
         ${this.renderTab()}
+        <div id="todo" style="margin-top: 10px; width: fit-content; font-size: 2rem; padding: 10px 20px; border-radius: 10px; background-color: #ffa4a4; transition: opacity .2s; opacity: 0;">
+          To Be Implemented
+        </div>
       </div>
     `;
   }
@@ -46,6 +48,12 @@ class CoordConv extends LitElement {
       case 'ttg':
         return html`<tle-to-geo></tle-to-geo>`;
     }
+  }
+
+  askConvert(e) {
+    const todo = this.shadowRoot.getElementById("todo");
+    todo.style.opacity = 1;
+    setTimeout(() => {todo.style.opacity = 0}, 2000);
   }
 
   changeTab(e) {

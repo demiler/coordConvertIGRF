@@ -40,7 +40,8 @@ class DatePicker extends LitElement {
 
   static get properties() {
     return {
-        value: { type: String },
+      value: { type: String },
+      placeholder: { type: String },
     }
   }
 
@@ -51,6 +52,7 @@ class DatePicker extends LitElement {
     this.day = today.getDate();
     this.month = today.getMonth();
     this.year = today.getFullYear();
+    this.placeholder = 'dd mm yyyy';
 
     this.min = "1900-1-1";
     this.max = "2029-12-31";
@@ -58,21 +60,32 @@ class DatePicker extends LitElement {
     this.prettyDate = this.makePretty();
   }
 
-  firstUpdated() {
-    this.inputEl = this.shadowRoot.querySelector("#date-input");
-    this.pickerEl = this.shadowRoot.querySelector("#date-picker");
+  connectedCallback() {
+    super.connectedCallback();
     this.addEventListener('blur', this.hidePicker);
 
     if (this.hasAttribute("value")) {
+      if (this.value == '') {
+        this.prettyDate = '';
+      }
+      else {
         this.setDateFromString(this.value);
         this.prettyDate = this.makePretty();
         this.requestUpdate();
+      }
     }
+  }
+
+  firstUpdated() {
+    this.inputEl = this.shadowRoot.querySelector("#date-input");
+    this.pickerEl = this.shadowRoot.querySelector("#date-picker");
   }
 
   render() {
     return html`
-        <text-input id="date-input" value=${this.prettyDate}
+      <text-input id="date-input" 
+          value=${this.prettyDate}
+          placeholder=${this.placeholder}
           @focus=${this.showPicker}
           @input=${this.parse}
           @change=${this.changeDate}
@@ -107,8 +120,11 @@ class DatePicker extends LitElement {
   }
 
   parse(e) {
-    if (e.target.value === "")
-        return;
+    if (e.target.value === "") {
+      console.log('empty');
+      this.value = '';
+      return;
+    }
 
     let vals = e.target.value.replace(/[\\\/ -]+/g, '/').split('/');
     const date = new Date(
@@ -143,12 +159,14 @@ class DatePicker extends LitElement {
   }
 
   changeDate(e) {
+    console.log(this.value);
+    if (this.value === '') return;
     this.inputEl.value = this.prettyDate;
     this.sendChange();
   }
 
   sendChange(type) {
-    let event = new CustomEvent('date-update', {
+    let event = new CustomEvent('update', {
         detail: this.getData(),
         bubbles: true,
         composed: true

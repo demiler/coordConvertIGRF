@@ -28,20 +28,26 @@ class TimePicker extends LitElement {
         this.list.push(padNumber(i, 2) + ':' + padNumber(j, 2));
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+
+    if (this.hasAttribute("value") && this.value !== '')
+      this.setDetTime(this.value);
+
+    //this.scrollToBest();
+    this.addEventListener('blur', this.change);
+  }
+
   firstUpdated() {
     this.inputEl = this.shadowRoot.querySelector("#input");
     this.listEl = this.shadowRoot.querySelector("#list");
-
-    if (this.hasAttribute("value"))
-      this.setDetTime(this.value);
-
-    this.scrollToBest();
-    this.addEventListener('blur', this.change);
   }
 
   render() {
     return html`
-      <text-input id="input" .value=${this.value}
+      <text-input id="input"
+        .value=${this.value}
+        placeholder="hh:mm:ss"
         @focus=${this.showList}
         @input=${this.removeInvalid}
         @change=${this.change}
@@ -57,7 +63,9 @@ class TimePicker extends LitElement {
 
   removeInvalid(e) {
     this.value = e.target.value.replace(/[^0-9 :,]+/g, '').replace(/ +/g, ' ');
-    this.inputEl.value = this.value;
+    //this.inputEl.value = this.value;
+    this.inputEl.forceUpdate(this.value);
+    if (this.value == '') return;
 
     let vals = this.value.match(/\d+/g);
     if (vals === null) {
@@ -80,7 +88,7 @@ class TimePicker extends LitElement {
   }
 
   sendChange() {
-    let event = new CustomEvent('time-update', {
+    let event = new CustomEvent('update', {
       detail: this.getData(),
       bubbles: true,
       composed: true
@@ -96,8 +104,10 @@ class TimePicker extends LitElement {
   }
 
   change(e) {
-    this.formatValue();
-    this.sendChange();
+    if (this.value !== '') {
+      this.formatValue();
+      this.sendChange();
+    }
     this.hideList();
     this.inputEl.blur();
   }
