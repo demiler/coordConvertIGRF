@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit-element'
 import style from '../css/time-picker.css';
 import { padNumber, clamp } from './utils.mjs';
+import './text-input.mjs';
 
 class TimePicker extends LitElement {
   static get styles() {
@@ -28,7 +29,7 @@ class TimePicker extends LitElement {
   }
 
   firstUpdated() {
-    this.inputEl = this.shadowRoot.querySelector("input");
+    this.inputEl = this.shadowRoot.querySelector("#input");
     this.listEl = this.shadowRoot.querySelector("#list");
 
     if (this.hasAttribute("value"))
@@ -40,16 +41,17 @@ class TimePicker extends LitElement {
 
   render() {
     return html`
-      <input type="text" .value=${this.value}
+      <text-input id="input" .value=${this.value}
         @focus=${this.showList}
         @input=${this.removeInvalid}
         @change=${this.change}
       >
-      <div id="list" tabindex="-1" hidden>
-        ${this.list.map(time => html`
-          <span class='time' @click=${this.determineTime}>${time}</span>
-        `)}
-      </div>
+        <div id="list" tabindex="-1" hidden>
+          ${this.list.map(time => html`
+            <span class='time' @click=${this.determineTime}>${time}</span>
+          `)}
+        </div>
+      </text-input>
     `;
   }
 

@@ -5,23 +5,9 @@
   --color-scrorll: #dadce0;
 }
 
-input {
-  border: none;
-  background: var(--color-inactive);
-  padding: 5px 5px 2px 5px;
-  border-bottom: 3px solid var(--color-inactive);
-  border-radius: 10px;
-  font: inherit;
+#input {
   width: inherit;
   height: inherit;
-  text-align: inherit;
-  transition: border-color .3s;
-  box-sizing: border-box;
-}
-
-input:focus {
-  outline: none;
-  border-color: var(--color-active);
 }
 
 #list {
@@ -41,6 +27,7 @@ input:focus {
   padding: 5px;
   opacity: 1;
   z-index: 2;
+  border-radius: 10px;
 }
 
 #list[hidden] {

@@ -3,32 +3,9 @@
   position: relative;
 }
 
-input {
-  box-sizing: border-box;
-
-  border: none;
-  background: #eee;
-
-  padding: 5px 5px 2px 5px;
-  border-bottom: 3px solid #eee;
-  border-radius: 10px;
-
-  font: inherit;
+#date-input {
   width: inherit;
   height: inherit;
-  text-align: inherit;
-
-  transition: border-color .3s;
-}
-
-:host(:focus-within) input {
-  outline: none;
-  border-color: #87c1ff;
-}
-
-input.error {
-  outline: none;
-  border-color: #f7c1ff;
 }
 
 #date-picker {
