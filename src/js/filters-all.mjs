@@ -10,12 +10,18 @@ class FiltersAll extends LitElement {
 
   static get properties() {
     return {
+      filters: { type: Object },
     };
+  }
+
+  constructor() {
+    super();
+    this.filters = {};
   }
 
   render() {
     return html`
-      <div id="single">
+      <div id="single" @update=${this.handleSinlge}>
         <tog-btn id="date"  >Date</tog-btn>
         <tog-btn id="shadow">Shad</tog-btn>
         <tog-btn id="lb"    >LB</tog-btn>
@@ -24,13 +30,30 @@ class FiltersAll extends LitElement {
         <tog-btn id="tle"   >TLE</tog-btn>
       </div>
 
-      <div id="multi">
+      <div id="multi" @update=${this.handleMulti}>
         <multi-btn id="gsm" .labels=${["X","Y","Z"]}      >GSM</multi-btn>
         <multi-btn id="dm"  .labels=${["Lat","Lon","Alt"]}>DM</multi-btn>
         <multi-btn id="geo" .labels=${["X","Y","Z"]}      >GEO</multi-btn>
         <multi-btn id="int" .labels=${["X","Y","Z", "F"]} >Intensivity</multi-btn>
       </div>
     `;
+  }
+
+  sendUpdate() {
+    this.dispatchEvent(new CustomEvent('update', {
+      detail: this.filters;
+    }));
+    this.sendUpdate();
+  }
+
+  handleSinlge(e) {
+    this.filters[e.target.id] = e.value;
+    this.sendUpdate();
+  }
+
+  handleMulti(e) {
+    this.filters[e.target.id] = e.detail;
+    this.sendUpdate();
   }
 };
 
