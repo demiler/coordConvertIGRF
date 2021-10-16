@@ -2,10 +2,11 @@ import { LitElement, html, css } from 'lit-element'
 import style from '../css/date-picker.css';
 import 'app-datepicker';
 import { padNumber } from './utils.mjs';
+import './text-input.mjs';
 
 const MONTHS =
-  //["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  ["янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"];
+  ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+  //["янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"];
 
 const getCurrentDate = () => {
   const temp = new Date();
@@ -23,6 +24,9 @@ const isValidDate = (d) => {
 
 const getMonthFromString = (mon) => {
   if (mon === undefined || mon === null) return -1;
+
+  if (/^\d+$/.test(mon)) return Number(mon) - 1;
+
   mon = mon.toLowerCase().slice(0, 3);
   return MONTHS.indexOf(mon);
   //return new Date(Date.parse(mon +" 1, 2000")).getMonth()
@@ -68,24 +72,23 @@ class DatePicker extends LitElement {
 
   render() {
     return html`
-        <input id="date-input" value=${this.prettyDate} type="text"
-          spellcheck="false"
+        <text-input id="date-input" value=${this.prettyDate}
           @focus=${this.showPicker}
           @input=${this.parse}
           @change=${this.changeDate}
           @keyup=${this.checkKeyUp}
         >
-
-        <app-datepicker tabindex="-1"
-            value=${this.value}
-            id="date-picker"
-            @datepicker-value-updated=${this.updateDate}
-            firstDayOfWeek="1"
-            min=${this.min}
-            max=${this.max}
-            inline
-            hidden
-        ></app-datepicker>
+          <app-datepicker tabindex="-1"
+              value=${this.value}
+              id="date-picker"
+              @datepicker-value-updated=${this.updateDate}
+              firstDayOfWeek="1"
+              min=${this.min}
+              max=${this.max}
+              inline
+              hidden
+          ></app-datepicker>
+        </text-input>
     `;
   }
 
@@ -117,7 +120,6 @@ class DatePicker extends LitElement {
     const month = date.getMonth();
     const year = date.getFullYear();
     const value = this.formatDate(day, month, padNumber(year, 4));
-    console.log(day, month, year, value);
 
     if (!isValidDate(date) || value < this.min || value > this.max)
         return;

@@ -41,7 +41,7 @@ class FiltersAll extends LitElement {
 
   sendUpdate() {
     this.dispatchEvent(new CustomEvent('update', {
-      detail: this.filters;
+      detail: this.filters
     }));
     this.sendUpdate();
   }
