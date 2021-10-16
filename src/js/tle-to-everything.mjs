@@ -3,6 +3,7 @@ import style from '../css/tle-to-everything.css';
 import './filters-all.mjs';
 import './time-picker.mjs';
 import './date-picker.mjs';
+import './text-input.mjs';
 
 class TleToEverything extends LitElement {
   static get styles() {
@@ -21,7 +22,7 @@ class TleToEverything extends LitElement {
 
       <div id='inputs'>
         <label>TLE:</label>
-        <input id="tle" type="text">
+        <text-input id="tle"></text-input>
 
         <span></span>
         <span class='range-label'>From</span>

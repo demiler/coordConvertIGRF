@@ -9,11 +9,13 @@ class TextInput extends LitElement {
   static get properties() {
     return {
       value: { type: String, attribute: false },
+      type: { type: String },
     };
   }
 
   constructor() {
     super();
+    this.type = 'text';
     this.value = '';
     this.el = undefined;
   }
@@ -25,7 +27,7 @@ class TextInput extends LitElement {
 
   render() {
     return html`
-      <input id="input" type="text" spellcheck="false"
+      <input id="input" type=${this.type} spellcheck="false"
         .value=${this.value}
         @input=${this.handleInput}
         @change=${this.handleChange}

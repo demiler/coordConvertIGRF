@@ -4,6 +4,7 @@ import style from '../css/geo-to-everything.css';
 import './filters-all.mjs';
 import './time-picker.mjs';
 import './date-picker.mjs';
+import './text-input.mjs';
 import geoIco from '../../assets/geo_icon.svg';
 import geodIco from '../../assets/geod_icon.svg';
 
@@ -26,9 +27,9 @@ class GeoToEverything extends LitElement {
           <label>${this.geod ? 'Lon' : 'Y'}</label>
           <label>${this.geod ? 'Alt' : 'Z'}</label>
 
-          <input id="x" type="number" autocomplete="off">
-          <input id="y" type="number" autocomplete="off">
-          <input id="z" type="number" autocomplete="off">
+          <text-input id="x" type="number"></text-input>
+          <text-input id="y" type="number"></text-input>
+          <text-input id="z" type="number"></text-input>
         </span>
 
         <label>Date:</label>

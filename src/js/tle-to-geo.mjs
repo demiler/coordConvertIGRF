@@ -1,6 +1,7 @@
 import { html, LitElement } from 'lit';
 import style from '../css/tle-to-geo.css';
 import './togbtn.mjs';
+import './text-input.mjs';
 
 class TleToGeo extends LitElement {
   static get styles() {
@@ -11,7 +12,7 @@ class TleToGeo extends LitElement {
     return html`
       <div id='inputs'>
         <label>TLE:</label>
-        <input id="tle" type="text">
+        <text-input id="tle"></text-input>
 
         <span></span>
         <span class='range-label'>From</span>
