@@ -41,7 +41,7 @@ class NoradInput extends LitElement {
     const val = (tar.id === 'norad' ? tar.value : e.detail);
 
     switch (tar.id) {
-      case 'norad':    this.norad = [ val ]; break;
+      case 'norad':    this.norad = val; break;
       case 'dateFrom': this.date[0] = val; break;
       case 'dateTo':   this.date[1] = val; break;
       case 'timeFrom': this.time[0] = val; break;

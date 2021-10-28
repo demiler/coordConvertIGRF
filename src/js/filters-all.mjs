@@ -8,20 +8,14 @@ class FiltersAll extends LitElement {
     return [ style ];
   }
 
-  static get properties() {
-    return {
-      filters: { type: Object },
-    };
-  }
-
   constructor() {
     super();
-    this.filters = {};
+    this.filters = new Set();
   }
 
   render() {
     return html`
-      <div id="single" @update=${this.handleSinlge}>
+      <div id="single" @update=${this.updateFilters}>
         <tog-btn id="shadow">Shad</tog-btn>
         <tog-btn id="mlt"   >MLT</tog-btn>
         <tog-btn id="l"     >L</tog-btn>
@@ -29,7 +23,7 @@ class FiltersAll extends LitElement {
         <tog-btn id="norad" >Norad</tog-btn>
       </div>
 
-      <div id="multi" @update=${this.handleMulti}>
+      <div id="multi" @update=${this.updateFilters}>
         <multi-btn id="gsm" .labels=${["X","Y","Z"]}      >GSM</multi-btn>
         <multi-btn id="dm"  .labels=${["Lat","Lon","Alt"]}>DM</multi-btn>
         <multi-btn id="geo" .labels=${["X","Y","Z"]}      >GEO</multi-btn>
@@ -38,22 +32,28 @@ class FiltersAll extends LitElement {
     `;
   }
 
-  sendUpdate() {
+  updateFilters(e) {
+    e.stopPropagation();
+    const id = e.target.id;
+
+    if (e.currentTarget.id === 'single') {
+      if (e.value) this.filters.add(id);
+      else this.filters.delete(id);
+    }
+    else {
+      e.target.labels //delete old values
+        .filter(label => !e.detail.includes(label))
+        .map(l => `${id}.${l}`)
+        .forEach(todel => this.filters.delete(todel));
+
+      e.detail        //add new values
+        .map(f => `${id}.${f}`)
+        .forEach(toadd => this.filters.add(toadd));
+    }
+
     this.dispatchEvent(new CustomEvent('update', {
-      detail: this.filters
+      detail: Array.from(this.filters),
     }));
-  }
-
-  handleSinlge(e) {
-    e.stopPropagation();
-    this.filters[e.target.id] = e.value;
-    this.sendUpdate();
-  }
-
-  handleMulti(e) {
-    e.stopPropagation();
-    this.filters[e.target.id] = e.detail;
-    this.sendUpdate();
   }
 };
 

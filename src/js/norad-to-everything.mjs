@@ -11,7 +11,7 @@ class NoradToEverything extends LitElement {
   constructor() {
     super();
     this.filters = {};
-    this.norad  = {};
+    this.inputs  = {};
   }
 
   render() {
@@ -19,7 +19,7 @@ class NoradToEverything extends LitElement {
       <div class='group-label'></div>
       <div class='group-label'>Filters</div>
 
-      <norad-input id="norad" @update=${this.updateInputs}
+      <norad-input id="inputs" @update=${this.updateInputs}
       ></norad-input>
 
       <filters-all id="filters" @update=${this.updateInputs}
@@ -30,7 +30,7 @@ class NoradToEverything extends LitElement {
   }
 
   updateInputs(e) {
-    this[e.target.id] = e.detail
+    this[e.currentTarget.id] = e.detail
   }
 
   sendUpdate() {
@@ -43,7 +43,7 @@ class NoradToEverything extends LitElement {
 
   getData() {
     return {
-      norad:   this.norad,
+      inputs:  this.inputs,
       filters: this.filters,
     }
   }

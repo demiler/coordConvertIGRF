@@ -53,7 +53,7 @@ class CoordConv extends LitElement {
 
   askConvert(e) {
     const todo = this.shadowRoot.getElementById("todo");
-    console.log(e.detail)
+    console.log(e.detail.filters)
     //todo.style.opacity = 1;
     //setTimeout(() => {todo.style.opacity = 0}, 2000);
   }

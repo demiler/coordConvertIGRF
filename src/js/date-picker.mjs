@@ -117,11 +117,11 @@ class DatePicker extends LitElement {
     this.value = this.formatDate();
     this.prettyDate = this.makePretty();
     this.changeDate();
+    this.hidePicker();
   }
 
   parse(e) {
     if (e.target.value === "") {
-      console.log('empty');
       this.value = '';
       return;
     }
@@ -159,7 +159,6 @@ class DatePicker extends LitElement {
   }
 
   changeDate(e) {
-    console.log(this.value);
     if (this.value === '') return;
     this.inputEl.value = this.prettyDate;
     this.sendChange();
