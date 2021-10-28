@@ -35,7 +35,6 @@ class CoordConv extends LitElement {
       </div>
     `;
   }
-        //${transition(this.renderTab(), slide({x:'100px'}))}
 
   renderTab() {
     switch (this.tab) {
@@ -49,6 +48,21 @@ class CoordConv extends LitElement {
   }
 
   askConvert(e) {
+    fetch(`${window.location.href}convert`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(e.detail),
+    })
+    .then(res => res.json())
+    .then(res => {
+      console.log(res);
+    })
+    .catch(err => {
+      console.log('some error', err);
+    });
   }
 
   changeTab(e) {

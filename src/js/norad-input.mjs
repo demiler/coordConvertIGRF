@@ -8,8 +8,9 @@ class NoradInput extends LitElement {
 
   constructor() {
     super();
-    this.date = []
-    this.time = []
+    this.norad = '';
+    this.date = [];
+    this.time = [];
   }
 
   render() {
@@ -37,6 +38,7 @@ class NoradInput extends LitElement {
   }
 
   updateInputs(e) {
+    e.stopPropagation()
     const tar = e.target;
     const val = (tar.id === 'norad' ? tar.value : e.detail);
 
@@ -46,7 +48,6 @@ class NoradInput extends LitElement {
       case 'dateTo':   this.date[1] = val; break;
       case 'timeFrom': this.time[0] = val; break;
       case 'timeTo':   this.time[1] = val; break;
-      case 'filters':  this.filters = val; break;
     }
 
     this.dispatchEvent(new CustomEvent('update', {
