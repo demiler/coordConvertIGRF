@@ -5,10 +5,10 @@
 
 #single {
   display: grid;
-  grid-template-columns: repeat(2, 50px);
+  grid-template-columns: repeat(2, 60px);
   gap: 10px;
   align-items: center;
-  align-content: space-between;
+  align-content: flex-start;
 }
 
 #single > * {
@@ -23,6 +23,7 @@
 
 #multi > * {
   --slot-margin: .4rem;
-  --label-size: 1.8rem;
+  --label-height: 1.8rem;
+  --label-width: 2rem;
 }
 

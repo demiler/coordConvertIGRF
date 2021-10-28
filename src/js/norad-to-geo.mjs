@@ -1,7 +1,7 @@
 import { html, LitElement } from 'lit';
 import style from '../css/norad-to-geo.css';
 import './togbtn.mjs';
-import './text-input.mjs';
+import './norad-input.mjs';
 
 class NoradToGeo extends LitElement {
   static get styles() {
@@ -27,22 +27,8 @@ class NoradToGeo extends LitElement {
 
   render() {
     return html`
-      <div id='inputs' @update=${this.updateInputs}>
-        <label>Norad ID:</label>
-        <text-input id="norad"></text-input>
-
-        <span></span>
-        <span class='range-label'>From</span>
-        <span class='range-label'>To</span>
-
-        <label>Date:</label>
-        <date-picker id="dateFrom" value=${this.date[0]}></date-picker>
-        <date-picker id="dateTo"   value=${this.date[1]}></date-picker>
-
-        <label>Time:</label>
-        <time-picker id="timeFrom" value=${this.time[0]}></time-picker>
-        <time-picker id="timeTo"   value=${this.time[1]}></time-picker>
-      </div>
+      <norad-input id="inputs" @update=${this.updateInputs}
+      ></norad-input>
 
       <div id="filters" @update=${this.updateFilters}>
         <tog-btn id="time">Time</tog-btn>

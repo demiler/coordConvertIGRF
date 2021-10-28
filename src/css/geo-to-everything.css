@@ -25,6 +25,7 @@ text-input {
   display: grid;
   grid-template-columns: 3rem 1fr 1fr;
   gap: 10px;
+  align-items: center;
 }
 
 #geo {

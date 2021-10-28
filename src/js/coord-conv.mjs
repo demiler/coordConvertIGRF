@@ -18,7 +18,8 @@ class CoordConv extends LitElement {
 
   constructor() {
     super();
-    this.tab = "ttg";
+    this.tab = localStorage.getItem('tab');
+    if (this.tab === null) this.tab = 'ttg';
   }
 
   render() {
@@ -52,12 +53,14 @@ class CoordConv extends LitElement {
 
   askConvert(e) {
     const todo = this.shadowRoot.getElementById("todo");
-    todo.style.opacity = 1;
-    setTimeout(() => {todo.style.opacity = 0}, 2000);
+    console.log(e.detail)
+    //todo.style.opacity = 1;
+    //setTimeout(() => {todo.style.opacity = 0}, 2000);
   }
 
   changeTab(e) {
     this.tab = e.target.id;
+    localStorage.setItem('tab', this.tab);
   }
 };
 

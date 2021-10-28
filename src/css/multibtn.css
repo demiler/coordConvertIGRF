@@ -1,5 +1,7 @@
 :host {
   --label-size: unset;
+  --label-width: var(--label-size);
+  --label-height: var(--label-size);
   --slot-margin: unset;
 
   display: inline-block;
@@ -34,6 +36,6 @@
   border-radius: inherit;
   line-height: 100%;
 
-  width: var(--label-size);
-  height: var(--label-size);
+  width: var(--label-width);
+  height: var(--label-height);
 }

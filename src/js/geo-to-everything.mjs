@@ -81,7 +81,6 @@ class GeoToEverything extends LitElement {
       bubbles: true,
       composed: true
     }));
-    console.log('hi');
   }
 
   switchGeod() {
