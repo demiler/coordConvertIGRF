@@ -31,7 +31,7 @@ class NoradInput extends LitElement {
         <time-picker id="timeTo" value=${this.time[1]}></time-picker>
 
         <label>Step (sec):</label>
-        <text-input id="step"</text-input>
+        <text-input id="step" type="number"></text-input>
       </div>
     `;
   }

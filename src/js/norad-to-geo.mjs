@@ -22,7 +22,7 @@ class NoradToGeo extends LitElement {
     this.norad = [];
     this.date = [];
     this.time = [];
-    this.filters = {};
+    this.filters = new Set();
   }
 
   render() {
@@ -58,7 +58,8 @@ class NoradToGeo extends LitElement {
 
 
   updateFilters(e) {
-    this.filters[e.target.id] = e.value;
+    if (e.value) this.filters.add(e.target.id);
+    else this.filters.delete(e.target.id);
   }
 
   updateInputs(e) {
@@ -71,16 +72,15 @@ class NoradToGeo extends LitElement {
       case 'dateTo':   this.date[1] = val; break;
       case 'timeFrom': this.time[0] = val; break;
       case 'timeTo':   this.time[1] = val; break;
-      case 'filters':  this.filters = val; break;
     }
   }
 
   getData() {
     return {
-      norad:     this.norad,
+      norad:   this.norad,
       date:    this.date,
       time:    this.time,
-      filters: this.filters,
+      filters: Array.from(this.filters),
     }
   }
 };

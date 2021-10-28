@@ -34,6 +34,9 @@ class GeoToEverything extends LitElement {
 
   render() {
     return html`
+      <div class='group-label'></div>
+      <div class='group-label'>Filters</div>
+
       <div id='inputs'>
         <label id='geo'>${this.geod ? 'GEOD' : 'GEO'}:</label>
         <span id="coord-input" @input=${this.updateCoord}>

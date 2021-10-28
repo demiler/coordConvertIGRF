@@ -1,7 +1,8 @@
 :host {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(300px, 500px) auto;
   column-gap: 30px;
+  justify-content: center;
 }
 
 #filters {

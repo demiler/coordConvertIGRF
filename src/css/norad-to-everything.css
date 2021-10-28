@@ -24,6 +24,10 @@
   }
 }
 
+#filters {
+  height: fit-content;
+}
+
 #conv-btn {
   background-color: #cfffbe;
   border: none;

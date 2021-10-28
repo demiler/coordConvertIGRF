@@ -19,22 +19,19 @@ class CoordConv extends LitElement {
   constructor() {
     super();
     this.tab = localStorage.getItem('tab');
-    if (this.tab === null) this.tab = 'ttg';
+    if (this.tab === null) this.tab = 'ntg';
   }
 
   render() {
     return html`
       <nav @click=${this.changeTab}>
-        <div id="tte" ?current=${this.tab === "tte"}>Norad ID to everything</div>
+        <div id="nte" ?current=${this.tab === "nte"}>Norad ID to everything</div>
         <div id="gte" ?current=${this.tab === "gte"}>GEO to everything</div>
-        <div id="ttg" ?current=${this.tab === "ttg"}>Norad ID to GEO</div>
+        <div id="ntg" ?current=${this.tab === "ntg"}>Norad ID to GEO</div>
       </nav>
 
       <div id="content" @convert=${this.askConvert}>
         ${this.renderTab()}
-        <div id="todo" style="margin-top: 10px; width: fit-content; font-size: 2rem; padding: 10px 20px; border-radius: 10px; background-color: #ffa4a4; transition: opacity .2s; opacity: 0;">
-          To Be Implemented
-        </div>
       </div>
     `;
   }
@@ -42,20 +39,16 @@ class CoordConv extends LitElement {
 
   renderTab() {
     switch (this.tab) {
-      case 'tte':
+      case 'nte':
         return html`<norad-to-everything></norad-to-everything>`;
       case 'gte':
         return html`<geo-to-everything></geo-to-everything>`;
-      case 'ttg':
+      case 'ntg':
         return html`<norad-to-geo></norad-to-geo>`;
     }
   }
 
   askConvert(e) {
-    const todo = this.shadowRoot.getElementById("todo");
-    console.log(e.detail.filters)
-    //todo.style.opacity = 1;
-    //setTimeout(() => {todo.style.opacity = 0}, 2000);
   }
 
   changeTab(e) {
