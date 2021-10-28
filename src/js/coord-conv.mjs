@@ -1,9 +1,9 @@
 import { html, LitElement } from 'lit-element';
 import { transition, slide } from 'lit-transition';
 import style from '../css/coord-conv.css';
-import './tle-to-everything.mjs';
+import './norad-to-everything.mjs';
 import './geo-to-everything.mjs';
-import './tle-to-geo.mjs';
+import './norad-to-geo.mjs';
 
 class CoordConv extends LitElement {
   static get styles() {
@@ -24,9 +24,9 @@ class CoordConv extends LitElement {
   render() {
     return html`
       <nav @click=${this.changeTab}>
-        <div id="tte" ?current=${this.tab === "tte"}>TLE to everything</div>
+        <div id="tte" ?current=${this.tab === "tte"}>Norad ID to everything</div>
         <div id="gte" ?current=${this.tab === "gte"}>GEO to everything</div>
-        <div id="ttg" ?current=${this.tab === "ttg"}>TLE to GEO</div>
+        <div id="ttg" ?current=${this.tab === "ttg"}>Norad ID to GEO</div>
       </nav>
 
       <div id="content" @convert=${this.askConvert}>
@@ -42,11 +42,11 @@ class CoordConv extends LitElement {
   renderTab() {
     switch (this.tab) {
       case 'tte':
-        return html`<tle-to-everything></tle-to-everything>`;
+        return html`<norad-to-everything></norad-to-everything>`;
       case 'gte':
         return html`<geo-to-everything></geo-to-everything>`;
       case 'ttg':
-        return html`<tle-to-geo></tle-to-geo>`;
+        return html`<norad-to-geo></norad-to-geo>`;
     }
   }
 

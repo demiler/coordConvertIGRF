@@ -1,11 +1,11 @@
 import { html, LitElement } from 'lit';
-import style from '../css/tle-to-everything.css';
+import style from '../css/norad-to-everything.css';
 import './filters-all.mjs';
 import './time-picker.mjs';
 import './date-picker.mjs';
 import './text-input.mjs';
 
-class TleToEverything extends LitElement {
+class NoradToEverything extends LitElement {
   static get styles() {
     return [ style ];
   }
@@ -13,7 +13,7 @@ class TleToEverything extends LitElement {
   static get properties() {
     return {
       filters: { type: Object },
-      tle: { type: Array },
+      norad: { type: Array },
       date: { type: Array },
       time: { type: Array },
     };
@@ -22,7 +22,7 @@ class TleToEverything extends LitElement {
   constructor() {
     super();
     this.filters = {};
-    this.tle  = [];
+    this.norad  = [];
     this.date = [];
     this.time = [];
   }
@@ -33,8 +33,8 @@ class TleToEverything extends LitElement {
       <div class='group-label'>Filters</div>
 
       <div id='inputs' @update=${this.updateInputs}>
-        <label>TLE:</label>
-        <text-input id="tle" @input=${this.updateInputs}></text-input>
+        <label>Norad ID:</label>
+        <text-input id="norad" @input=${this.updateInputs}></text-input>
 
         <span></span>
         <span class='range-label'>From</span>
@@ -58,10 +58,10 @@ class TleToEverything extends LitElement {
 
   updateInputs(e) {
     const tar = e.target;
-    const val = (tar.id === 'tle' ? tar.value : e.detail);
+    const val = (tar.id === 'norad' ? tar.value : e.detail);
 
     switch (tar.id) {
-      case 'tle':      this.tle = [ val ]; break;
+      case 'norad':    this.norad = [ val ]; break;
       case 'dateFrom': this.date[0] = val; break;
       case 'dateTo':   this.date[1] = val; break;
       case 'timeFrom': this.time[0] = val; break;
@@ -80,7 +80,7 @@ class TleToEverything extends LitElement {
 
   getData() {
     return {
-      tle:     this.tle,
+      norad:     this.norad,
       date:    this.date,
       time:    this.time,
       filters: this.filters,
@@ -88,4 +88,4 @@ class TleToEverything extends LitElement {
   }
 };
 
-customElements.define('tle-to-everything', TleToEverything);
+customElements.define('norad-to-everything', NoradToEverything);

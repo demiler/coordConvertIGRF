@@ -27,7 +27,7 @@ class FiltersAll extends LitElement {
         <tog-btn id="lb"    >LB</tog-btn>
         <tog-btn id="mlt"   >MLT</tog-btn>
         <tog-btn id="time"  >Time</tog-btn>
-        <tog-btn id="tle"   >TLE</tog-btn>
+        <tog-btn id="norad" >Norad</tog-btn>
       </div>
 
       <div id="multi" @update=${this.handleMulti}>

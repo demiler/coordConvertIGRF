@@ -4,6 +4,26 @@
   column-gap: 30px;
 }
 
+@media only screen and (max-width: 800px) {
+  :host {
+    grid-template-columns: 1fr;
+  }
+
+  .group-label:nth-child(1) {
+    display: none;
+  }
+
+  .group-label:nth-child(2) {
+    grid-row: 2;
+    margin-top: 30px;
+    justify-self: center;
+  }
+
+  #filters {
+    justify-self: center;
+  }
+}
+
 #inputs {
   display: grid;
   grid-template-columns: auto 1fr 1fr;
@@ -13,7 +33,7 @@
   height: 100%;
 }
 
-#inputs #tle {
+#inputs #norad {
   grid-column: 2/4;
   width: 100%;
   height: 2rem;
@@ -31,12 +51,6 @@
 #inputs date-picker, #inputs time-picker {
   width: 100%;
   height: 2rem;
-}
-
-#filters {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
 }
 
 #conv-btn {

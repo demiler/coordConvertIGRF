@@ -1,16 +1,16 @@
 import { html, LitElement } from 'lit';
-import style from '../css/tle-to-geo.css';
+import style from '../css/norad-to-geo.css';
 import './togbtn.mjs';
 import './text-input.mjs';
 
-class TleToGeo extends LitElement {
+class NoradToGeo extends LitElement {
   static get styles() {
     return [ style ];
   }
 
   static get properties() {
     return {
-      tle: { type: Array },
+      norad: { type: Array },
       date: { type: Array },
       time: { type: Array },
       filters: { type: Object },
@@ -19,7 +19,7 @@ class TleToGeo extends LitElement {
 
   constructor() {
     super();
-    this.tle = [];
+    this.norad = [];
     this.date = [];
     this.time = [];
     this.filters = {};
@@ -28,8 +28,8 @@ class TleToGeo extends LitElement {
   render() {
     return html`
       <div id='inputs' @update=${this.updateInputs}>
-        <label>TLE:</label>
-        <text-input id="tle"></text-input>
+        <label>Norad ID:</label>
+        <text-input id="norad"></text-input>
 
         <span></span>
         <span class='range-label'>From</span>
@@ -46,7 +46,7 @@ class TleToGeo extends LitElement {
 
       <div id="filters" @update=${this.updateFilters}>
         <tog-btn id="time">Time</tog-btn>
-        <tog-btn id="tle" >TLE</tog-btn>
+        <tog-btn id="norad" >Norad ID</tog-btn>
         <tog-btn id="date">Date</tog-btn>
 
         <tog-btn id="geoX">geoX</tog-btn>
@@ -77,10 +77,10 @@ class TleToGeo extends LitElement {
 
   updateInputs(e) {
     const tar = e.target;
-    const val = (tar.id === 'tle' ? tar.value : e.detail);
+    const val = (tar.id === 'norad' ? tar.value : e.detail);
 
     switch (tar.id) {
-      case 'tle':      this.tle = [ val ]; break;
+      case 'norad':    this.norad = [ val ]; break;
       case 'dateFrom': this.date[0] = val; break;
       case 'dateTo':   this.date[1] = val; break;
       case 'timeFrom': this.time[0] = val; break;
@@ -91,7 +91,7 @@ class TleToGeo extends LitElement {
 
   getData() {
     return {
-      tle:     this.tle,
+      norad:     this.norad,
       date:    this.date,
       time:    this.time,
       filters: this.filters,
@@ -99,4 +99,4 @@ class TleToGeo extends LitElement {
   }
 };
 
-customElements.define('tle-to-geo', TleToGeo);
+customElements.define('norad-to-geo', NoradToGeo);
