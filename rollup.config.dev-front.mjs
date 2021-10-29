@@ -2,6 +2,7 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import copy from 'rollup-plugin-copy'
 import postcss from 'rollup-plugin-postcss';
 import postcssLit from 'rollup-plugin-postcss-lit';
+import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
 import glob from 'glob';
 import { resolve, dirname } from 'path';
@@ -15,6 +16,12 @@ export default {
     format: 'es'
   },
   plugins: [
+    serve({
+      open: false,
+      contentBase: 'dist',
+      host: '0.0.0.0',
+      port: 8080,
+    }),
     livereload({
       watch: 'dist',
       exts: [ 'html', 'mjs', 'css' ]

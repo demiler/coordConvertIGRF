@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev-front": "rollup -w -c ./rollup.config.dev_front.mjs",
     "dev": "rollup -w -c ./rollup.config.dev.mjs",
     "prod": "rollup -c ./rollup.config.prod.mjs"
   },

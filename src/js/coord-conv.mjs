@@ -48,13 +48,20 @@ class CoordConv extends LitElement {
   }
 
   askConvert(e) {
+    const body = {
+      ...e.detail['inputs'],
+      filters: e.detail['filters'],
+      type: this.tab
+    };
+    console.log(body);
+
     fetch(`${window.location.href}convert`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: JSON.stringify(e.detail),
+      body: JSON.stringify(body)
     })
     .then(res => res.json())
     .then(res => {

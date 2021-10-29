@@ -25,8 +25,13 @@ const launcher = {
     return { date, time, geo, lla };
   },
 
-  geos: async (prog, date, time, geo) => {
-    const proc = spawn(`./progs/${prog}`);
+  fromGeo: async (prog, date, time, geo) => {
+    if (
+      !['geo2RDMLLGsmMltShadOnly', 'geo2BigrfOnly', 'geo2LBOnly']
+      .includes(prog)
+    ) throw `Wrong prog name - ${prog}`;
+
+    const proc = spawn(`./${prog}`, [], { cwd: './progs' });
     if (!Array.isArray(date)) {
       date = [date];
       time = [time];
@@ -49,11 +54,25 @@ const launcher = {
     }
     proc.stdin.end();
 
-    const rawOut = await once(proc.stdout, 'data');
+    let errors;
+    const ac = new AbortController();
+    proc.stderr.on('data', (err) => {
+      errors = err.toString();
+      ac.abort();
+    });
+
+    let rawOut;
+    try {
+      rawOut = await once(proc.stdout, 'data', { signal: ac.signal });
+    }
+    catch(err) {
+      throw errors
+    }
+
     const values = rawOut
       .toString()
       .split('\n')
-      .map(line => line.trim())
+      .map(line => line.trim().split(/ +/))
       .filter(String)
       .map(vals => vals.map(Number))
 
@@ -68,16 +87,16 @@ const launcher = {
           shad.push(vals[7]);
         }
 
-        return { dm, gsm, mlt, shad };
+        return {
+          ...utils.explode(dm, 'dm', ['Lat', 'Lon', 'Alt']),
+          ...utils.explode(gsm, 'gsm', ['X', 'Y', 'Z']),
+          mlt, shad
+        };
 
       case 'geo2BigrfOnly':
-        const magnField = []
-        for (const vals of values) {
-          magnField.push(vals)
-        }
-        return { magnField };
+        return { ...utils.explode(values, 'magn', ['X', 'Y', 'Z', 'F']) };
 
-      case 'geo2LBOnly2':
+      case 'geo2LBOnly':
         const l = [], b = [];
         for (const vals of values) {
           l.push(vals[0]);

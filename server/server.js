@@ -47,32 +47,37 @@ app.post('/convert', jsonParser, async (req, res) => {
 
   switch (data.type) {
     case 'nte': //norad to everything
+
       if (data.date.length == 1)
         data.date.push(curDate());
       if (data.time.length == 1)
         data.time.push(curTime());
 
-      dtFrom = `${data.date[0]}T${data.time[0]}`
-      dtTo   = `${data.date[1]}T${data.time[1]}`
+      const dtFrom = `${data.date[0]}T${data.time[0]}`
+      const dtTo   = `${data.date[1]}T${data.time[1]}`
 
       try {
-        const geo = launcher.geolla(data.norad, dtFrom, dtTo, data.step);
-        const out = {};
+        const glaData = await launcher.geolla(data.norad, dtFrom, dtTo, data.step);
+
+        let out = {
+          date: glaData['date'],
+          time: glaData['time'],
+        };
 
         for (const prog in getters) {
-          const vals = uitls.differ(getters[prog], data.filters);
+          const vals = utils.differ(getters[prog], data.filters);
 
           if (vals.length !== 0) {
             const progOut = (prog === 'geolla')
-              ? geo
-              : launcher.start(prog, {...data, ...geo});
+              ? utils.explode(glaData['geo'], 'geo', ['X', 'Y', 'Z'])
+              : await launcher.fromGeo(prog, glaData['date'], glaData['time'], glaData['geo']);
             out = {...out, ...utils.filtered(progOut, vals)};
           }
         }
-
         res.send(out);
         res.end();
       } catch (err) {
+        console.log('ERROR:', err);
         res.status(400).end()
       }
       break;
