@@ -1,8 +1,9 @@
-const express = require('express');
+const bodyParser = require('body-parser');
 const { exec } = require('child_process');
+const express = require('express');
 const path = require('path');
 const utils = require('./utils.js');
-const bodyParser = require('body-parser');
+const launcher = require('./launcher.js');
 
 const PORT = 8081
 const app = express()
@@ -34,15 +35,16 @@ const getters = {
     [ 'magn.X', 'magn.Y', 'magn.Z', 'magn.F' ],
   'geo2RDMLLGsmMltShadOnly':
     [
-      'dm.Lat', 'dm.Lon', 'dm.Alt', 
+      'dm.Lat', 'dm.Lon', 'dm.Alt',
       'gsm.X',  'gsm.Y',  'gsm.Z',
-      'mlt', 'shad' 
+      'mlt', 'shad'
     ],
 };
 
 app.post('/convert', jsonParser, async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   data = req.body;
+
   switch (data.type) {
     case 'nte': //norad to everything
       if (data.date.length == 1)
@@ -55,6 +57,18 @@ app.post('/convert', jsonParser, async (req, res) => {
 
       try {
         const geo = launcher.geolla(data.norad, dtFrom, dtTo, data.step);
+        const out = {};
+
+        for (const prog in getters) {
+          const vals = uitls.differ(getters[prog], data.filters);
+
+          if (vals.length !== 0) {
+            const progOut = (prog === 'geolla')
+              ? geo
+              : launcher.start(prog, {...data, ...geo});
+            out = {...out, ...utils.filtered(progOut, vals)};
+          }
+        }
 
         res.send(out);
         res.end();
