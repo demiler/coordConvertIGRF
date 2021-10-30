@@ -6,14 +6,19 @@
   column-gap: 30px;
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 900px) {
   :host {
     grid-template-columns: 1fr;
-    row-gap: 30px;
   }
 
   #filters {
     justify-self: center;
+  }
+
+  #filters-label {
+    justify-self: center;
+    margin-top: 20px;
+    grid-row: 3;
   }
 }
 
@@ -26,6 +31,7 @@ text-input {
   grid-template-columns: 3rem 1fr 1fr;
   gap: 10px;
   align-items: center;
+  align-content: space-between;
 }
 
 #geo {
@@ -33,10 +39,20 @@ text-input {
   padding-bottom: 5px;
 }
 
+#coord-labels {
+  padding-left: calc(3rem + 10px);
+}
+
+#coord-labels > label {
+  width: 100%;
+}
+
 #coord-input {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
   grid-column: 2/4;
+}
+
+#coord-input, #coord-labels {
+  display: flex;
   column-gap: 10px;
 }
 

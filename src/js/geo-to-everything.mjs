@@ -30,16 +30,16 @@ class GeoToEverything extends LitElement {
 
   render() {
     return html`
-      <div class='group-label'></div>
-      <div class='group-label'>Filters</div>
+      <div class='group-label' id='coord-labels'>
+          <label>${this.geod ? 'Lat' : 'X'}</label>
+          <label>${this.geod ? 'Lon' : 'Y'}</label>
+          <label>${this.geod ? 'Alt' : 'Z'}</label>
+      </div>
+      <div class='group-label' id="filters-label">Filters</div>
 
       <div id='inputs'>
         <label id='geo'>${this.geod ? 'GEOD' : 'GEO'}:</label>
         <span id="coord-input" @input=${this.updateCoord}>
-          <label>${this.geod ? 'Lat' : 'X'}</label>
-          <label>${this.geod ? 'Lon' : 'Y'}</label>
-          <label>${this.geod ? 'Alt' : 'Z'}</label>
-
           <text-input id="x" type="number" value=${this.coord.x}></text-input>
           <text-input id="y" type="number" value=${this.coord.y}></text-input>
           <text-input id="z" type="number" value=${this.coord.z}></text-input>

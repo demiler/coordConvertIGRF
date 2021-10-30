@@ -15,17 +15,18 @@ class FiltersAll extends LitElement {
 
   render() {
     return html`
-      <div id="single" @update=${this.updateFilters}>
-        <tog-btn id="shad">Shad</tog-btn>
-        <tog-btn id="mlt"   >MLT</tog-btn>
-        <tog-btn id="l"     >L</tog-btn>
-        <tog-btn id="b"     >B</tog-btn>
-      </div>
-
       <div id="multi" @update=${this.updateFilters}>
+        <div id="single" @update=${this.updateFilters}>
+          <tog-btn id="shad">Shad</tog-btn>
+          <tog-btn id="mlt"   >MLT</tog-btn>
+          <tog-btn id="l"     >L</tog-btn>
+          <tog-btn id="b"     >B</tog-btn>
+        </div>
+
         <multi-btn id="gsm" .labels=${["X","Y","Z"]}      >GSM</multi-btn>
         <multi-btn id="dm"  .labels=${["Lat","Lon","Alt"]}>DM</multi-btn>
         <multi-btn id="geo" .labels=${["X","Y","Z"]}      >GEO</multi-btn>
+        <multi-btn id="geod" .labels=${["Lat","Lon","Alt"]}>GEOD</multi-btn>
         <multi-btn id="magn" .labels=${["X","Y","Z", "F"]}>Magnetic Field comp</multi-btn>
       </div>
     `;

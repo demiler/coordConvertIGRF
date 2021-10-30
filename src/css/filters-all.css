@@ -1,27 +1,24 @@
 :host {
-  display: flex;
-  gap: 10px;
+  display: block;
 }
 
 #single {
   display: grid;
-  grid-template-columns: repeat(2, 60px);
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
-  align-items: center;
-  align-content: flex-start;
 }
 
-#single > * {
+#single > tog-btn {
   height: 2rem;
 }
 
 #multi {
   display: grid;
-  grid-template-columns: 160px 200px;
+  grid-template-columns: 160px 160px 200px;
   gap: 10px;
 }
 
-#multi > * {
+#multi > multi-btn {
   --slot-margin: .4rem;
   --label-height: 1.8rem;
   --label-width: 2rem;
