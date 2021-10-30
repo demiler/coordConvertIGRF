@@ -43,7 +43,7 @@ class NoradToEverything extends LitElement {
 
   getData() {
     return {
-      inputs:  this.inputs,
+      ...this.inputs,
       filters: this.filters,
     }
   }

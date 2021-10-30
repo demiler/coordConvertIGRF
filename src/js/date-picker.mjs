@@ -83,7 +83,7 @@ class DatePicker extends LitElement {
 
   render() {
     return html`
-      <text-input id="date-input" 
+      <text-input id="date-input"
           value=${this.prettyDate}
           placeholder=${this.placeholder}
           @focus=${this.showPicker}
@@ -123,6 +123,8 @@ class DatePicker extends LitElement {
   parse(e) {
     if (e.target.value === "") {
       this.value = '';
+      this.day = this.month = this.year = undefined;
+      this.sendChange();
       return;
     }
 
@@ -189,6 +191,7 @@ class DatePicker extends LitElement {
   }
 
   getData() {
+    if (this.value === '') return undefined;
     return {
         value: this.value,
         day: this.day,

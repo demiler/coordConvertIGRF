@@ -35,9 +35,9 @@ class NoradToGeo extends LitElement {
         <tog-btn id="norad" >Norad ID</tog-btn>
         <tog-btn id="date">Date</tog-btn>
 
-        <tog-btn id="geoX">geoX</tog-btn>
-        <tog-btn id="geoY">geoY</tog-btn>
-        <tog-btn id="geoZ">geoZ</tog-btn>
+        <tog-btn id="geo.X">geo.X</tog-btn>
+        <tog-btn id="geo.Y">geo.Y</tog-btn>
+        <tog-btn id="geo.Z">geo.Z</tog-btn>
 
         <tog-btn id="lat">Lat</tog-btn>
         <tog-btn id="lon">Lon</tog-btn>
@@ -63,23 +63,12 @@ class NoradToGeo extends LitElement {
   }
 
   updateInputs(e) {
-    const tar = e.target;
-    const val = (tar.id === 'norad' ? tar.value : e.detail);
-
-    switch (tar.id) {
-      case 'norad':    this.norad = [ val ]; break;
-      case 'dateFrom': this.date[0] = val; break;
-      case 'dateTo':   this.date[1] = val; break;
-      case 'timeFrom': this.time[0] = val; break;
-      case 'timeTo':   this.time[1] = val; break;
-    }
+    this.inputs = e.detail;
   }
 
   getData() {
     return {
-      norad:   this.norad,
-      date:    this.date,
-      time:    this.time,
+      ...this.inputs,
       filters: Array.from(this.filters),
     }
   }

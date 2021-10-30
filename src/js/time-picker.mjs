@@ -65,7 +65,12 @@ class TimePicker extends LitElement {
     this.value = e.target.value.replace(/[^0-9 :,]+/g, '').replace(/ +/g, ' ');
     //this.inputEl.value = this.value;
     this.inputEl.forceUpdate(this.value);
-    if (this.value == '') return;
+
+    if (this.value == '') {
+      this.time = this.hours = this.mins = this.secs = undefined;
+      this.sendChange();
+      return;
+    }
 
     let vals = this.value.match(/\d+/g);
     if (vals === null) {
@@ -134,6 +139,7 @@ class TimePicker extends LitElement {
   }
 
   getData() {
+    if (this.value === '') return undefined;
     return {
       value: this.value,
       hours: this.hours,

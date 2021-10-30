@@ -15,17 +15,13 @@ class GeoToEverything extends LitElement {
 
   static get properties() {
     return {
-      coord: { type: Object },
       geod: { type: Boolean },
-      date: { type: Object },
-      time: { type: Object },
-      filters: { type: Object },
     };
   }
 
   constructor() {
     super();
-    this.filters = {};
+    this.filters = [];
     this.coord = { x: 0, y: 0, z: 0};
     this.geod = false;
     this.date = '';
@@ -70,7 +66,7 @@ class GeoToEverything extends LitElement {
           value=${this.time}
         ></time-picker>
 
-        <button @click=${this.sendUpdate}>Convert to</button>
+        <button @click=${this.sendConvert}>Convert to</button>
       </div>
 
 
@@ -78,7 +74,7 @@ class GeoToEverything extends LitElement {
     `;
   }
 
-  sendUpdate() {
+  sendConvert() {
     this.dispatchEvent(new CustomEvent('convert', {
       detail: this.getData(),
       bubbles: true,
@@ -107,13 +103,13 @@ class GeoToEverything extends LitElement {
   }
 
   getData() {
-    return {
-      coord: this.coord,
-      geod : this.geod,
+    const data = {
       time : this.time,
       date : this.date,
       filters: this.filters
     }
+    data[this.geod ? 'geod' : 'geo'] = this.coord;
+    return data;
   }
 };
 

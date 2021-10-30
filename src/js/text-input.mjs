@@ -25,7 +25,7 @@ class TextInput extends LitElement {
     super.connectedCallback();
     if (this.hasAttribute('value'))
       this.value = this.getAttribute('value');
-  
+
     if (this.hasAttribute('placeholder'))
       this.placeholder = this.getAttribute('placeholder');
   }
@@ -50,7 +50,7 @@ class TextInput extends LitElement {
     e.stopPropagation();
     this.value = e.target.value;
     this.dispatchEvent(new CustomEvent(type, {
-      value: this.value,
+      detail: this.value,
       bubbles: true,
       composed: true
     }));

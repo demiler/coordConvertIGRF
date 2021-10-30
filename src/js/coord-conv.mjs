@@ -49,11 +49,12 @@ class CoordConv extends LitElement {
 
   askConvert(e) {
     const body = {
-      ...e.detail['inputs'],
-      filters: e.detail['filters'],
+      ...e.detail,
       type: this.tab
     };
-    console.log(body);
+    for (const name in body) {
+      console.log(`${name}:`, body[name]);
+    }
 
     fetch(`${window.location.href}convert`, {
       method: 'POST',

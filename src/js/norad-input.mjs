@@ -8,16 +8,17 @@ class NoradInput extends LitElement {
 
   constructor() {
     super();
-    this.norad = '';
+    this.norad = undefined;
     this.date = [];
     this.time = [];
+    this.step = 1;
   }
 
   render() {
     return html`
-      <div id='inputs' @update=${this.updateInputs}>
+      <div id='inputs' @update=${this.updateInputs} @change=${this.updateInputs}>
         <label>Norad ID:</label>
-        <text-input id="norad" @input=${this.updateInputs}></text-input>
+        <text-input id="norad" type="number"></text-input>
 
         <span></span>
         <span class='range-label'>From (optional)</span>
@@ -32,7 +33,11 @@ class NoradInput extends LitElement {
         <time-picker id="timeTo" value=${this.time[1]}></time-picker>
 
         <label>Step (sec):</label>
-        <text-input id="step" type="number"></text-input>
+        <text-input
+            id="step"
+            type="number"
+            value=${this.step}
+        ></text-input>
       </div>
     `;
   }
@@ -40,14 +45,15 @@ class NoradInput extends LitElement {
   updateInputs(e) {
     e.stopPropagation()
     const tar = e.target;
-    const val = (tar.id === 'norad' ? tar.value : e.detail);
+    const val = e.detail;
 
     switch (tar.id) {
-      case 'norad':    this.norad = val; break;
+      case 'norad':    this.norad = Number(val); break;
       case 'dateFrom': this.date[0] = val; break;
       case 'dateTo':   this.date[1] = val; break;
       case 'timeFrom': this.time[0] = val; break;
       case 'timeTo':   this.time[1] = val; break;
+      case 'step':     this.step = Number(val); break;
     }
 
     this.dispatchEvent(new CustomEvent('update', {
@@ -60,9 +66,9 @@ class NoradInput extends LitElement {
       norad: this.norad,
       date: this.date,
       time: this.time,
+      step: this.step,
     }
   }
-
 };
 
 customElements.define('norad-input', NoradInput);
