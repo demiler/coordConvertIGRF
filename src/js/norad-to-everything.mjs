@@ -10,8 +10,12 @@ class NoradToEverything extends LitElement {
 
   constructor() {
     super();
-    this.filters = {};
+    this.filters = [];
     this.inputs  = {};
+  }
+
+  firstUpdated() {
+    this.inputs = this.shadowRoot.querySelector("#inputs").getData();
   }
 
   render() {
@@ -33,9 +37,33 @@ class NoradToEverything extends LitElement {
     this[e.currentTarget.id] = e.detail
   }
 
+  checkForBlank() {
+    const { date, time } = this.inputs;
+    console.log(this.inputs, date, time);
+    if (this.inputs.norad === null) return 'no norad id entered';
+    if (date[0] === '' && time[0] !== '') return 'from time entered but not date';
+    if (date[0] !== '' && time[0] === '') return 'from date entered but not time';
+    if (date[1] === '' && time[1] !== '') return 'to time entered but not date';
+    if (date[1] !== '' && time[1] === '') return 'to date entered but not time';
+    if (this.filters.length === 0) return 'no filters choosen';
+
+    return null;
+  }
+
   sendUpdate() {
+    const err = this.checkForBlank();
+    if (err !== null) return this.sendError(err);
+
     this.dispatchEvent(new CustomEvent('convert', {
       detail: this.getData(),
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  sendError(err) {
+    this.dispatchEvent(new CustomEvent('error', {
+      detail: err,
       bubbles: true,
       composed: true
     }));

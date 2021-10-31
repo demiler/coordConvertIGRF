@@ -8,9 +8,9 @@ class NoradInput extends LitElement {
 
   constructor() {
     super();
-    this.norad = undefined;
-    this.date = [];
-    this.time = [];
+    this.norad = null;
+    this.date = ['',''];
+    this.time = ['',''];
     this.step = 1;
   }
 
@@ -45,15 +45,16 @@ class NoradInput extends LitElement {
   updateInputs(e) {
     e.stopPropagation()
     const tar = e.target;
-    const val = e.detail;
+    const val = (e.detail === '') ? null : e.detail;
 
     switch (tar.id) {
-      case 'norad':    this.norad = Number(val); break;
-      case 'dateFrom': this.date[0] = val; break;
-      case 'dateTo':   this.date[1] = val; break;
-      case 'timeFrom': this.time[0] = val; break;
-      case 'timeTo':   this.time[1] = val; break;
-      case 'step':     this.step = Number(val); break;
+      case 'norad':    this.norad = val; break;
+      case 'dateFrom': this.date[0] = val.value; break;
+      case 'dateTo':   this.date[1] = val.value; break;
+      case 'timeFrom': this.time[0] = val.value; break;
+      case 'timeTo':   this.time[1] = val.value; break;
+      case 'step':     this.step = Math.max(1, Number(val));
+                       tar.value = this.step; break;
     }
 
     this.dispatchEvent(new CustomEvent('update', {

@@ -36,3 +36,21 @@ nav div:not(:last-child) {
 nav div[current] {
   background-color: var(--color-active);
 }
+
+#error {
+  display: block;
+  font-size: 1.5rem;
+  background-color: #ff95a7;
+
+  padding: .5rem;
+  border-radius: 10px;
+  width: fit-content;
+  margin-top: 20px;
+
+  transition: .3s;
+  opacity: 0;
+}
+
+#error[active] {
+  opacity: 1;
+}

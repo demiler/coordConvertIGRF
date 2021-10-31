@@ -8,3 +8,6 @@ export const clamp = (min, max, val) => {
     return Math.min(max, Math.max(min, val));
 }
 
+export const isObject = (obj) => {
+  return typeof obj === 'object' && !Array.isArray(obj) && obj !== null
+}

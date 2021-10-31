@@ -13,13 +13,17 @@ class CoordConv extends LitElement {
   static get properties() {
     return {
       tab: { type: String },
+      showError: { type: Boolean },
+      errorMessage: { type: String },
     };
   }
 
   constructor() {
     super();
     this.tab = localStorage.getItem('tab');
-    if (this.tab === null) this.tab = 'ntg';
+    if (this.tab === null) this.tab = 'nte';
+    this.errorMessage = '';
+    this.showError = false;
   }
 
   render() {
@@ -30,8 +34,12 @@ class CoordConv extends LitElement {
         <!--<div id="ntg" ?current=${this.tab === "ntg"}>Norad ID to GEO</div>-->
       </nav>
 
-      <div id="content" @convert=${this.askConvert}>
+      <div id="content" @convert=${this.askConvert} @error=${this.handleError}>
         ${this.renderTab()}
+      </div>
+
+      <div id="error" ?active=${this.showError}>
+        Error: ${this.errorMessage}
       </div>
     `;
   }
@@ -47,14 +55,15 @@ class CoordConv extends LitElement {
     }
   }
 
+  handleError(e) {
+    this.displayError(e.detail);
+  }
+
   askConvert(e) {
     const body = {
       ...e.detail,
       type: this.tab
     };
-    for (const name in body) {
-      console.log(`${name}:`, body[name]);
-    }
 
     fetch(`${window.location.href}convert`, {
       method: 'POST',
@@ -76,6 +85,13 @@ class CoordConv extends LitElement {
   changeTab(e) {
     this.tab = e.target.id;
     localStorage.setItem('tab', this.tab);
+  }
+
+  displayError(error, delay=3000) {
+    clearTimeout(this.toem);
+    this.errorMessage = error;
+    this.showError = true;
+    this.toem = setTimeout(() => this.showError = false, delay);
   }
 };
 

@@ -139,7 +139,6 @@ class TimePicker extends LitElement {
   }
 
   getData() {
-    if (this.value === '') return undefined;
     return {
       value: this.value,
       hours: this.hours,

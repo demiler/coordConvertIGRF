@@ -74,9 +74,30 @@ class GeoToEverything extends LitElement {
     `;
   }
 
+  checkForBlank() {
+    const coords = Object.values(this.coord);
+    if (coords.some(c => c === null)) return 'incorrect coordinates';
+    if (this.date === '') return 'no date entered';
+    if (this.time === '') return 'no time entered';
+    if (this.filters.length === 0) return 'no filters choosen';
+
+    return null;
+  }
+
   sendConvert() {
+    const err = this.checkForBlank();
+    if (err !== null) return this.sendError(err);
+
     this.dispatchEvent(new CustomEvent('convert', {
       detail: this.getData(),
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  sendError(msg) {
+    this.dispatchEvent(new CustomEvent('error', {
+      detail: msg,
       bubbles: true,
       composed: true
     }));
@@ -91,7 +112,9 @@ class GeoToEverything extends LitElement {
   }
 
   updateCoord(e) {
-    this.coord[e.target.id] = Number(e.target.value);
+    this.coord[e.target.id] = (e.detail === '')
+      ? null
+      : Number(e.target.value);
   }
 
   updateTime(e) {

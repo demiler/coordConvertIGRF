@@ -191,7 +191,6 @@ class DatePicker extends LitElement {
   }
 
   getData() {
-    if (this.value === '') return undefined;
     return {
         value: this.value,
         day: this.day,
