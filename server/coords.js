@@ -24,10 +24,10 @@ function geo2lla(x, y, z) {
   const denom = p - e * e * a * costheta * costheta * costheta;
 
   //Now calculate LLA
-  const lat  = Math.atan(num / denom);
-  const lon = Math.atan(y / x);
+  let lat  = Math.atan(num / denom);
+  let lon = Math.atan(y / x);
   const N = getN(lat);
-  const alt  = (p / Math.cos(lat)) - N;
+  let alt  = (p / Math.cos(lat)) - N;
 
   if (x < 0 && y < 0) {
       lon = lon - Math.PI;

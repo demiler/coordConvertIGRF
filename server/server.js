@@ -21,6 +21,7 @@ app.post('/convert', jsonParser, async (req, res) => {
     case 'nte': //norad to everything
       if (!nteValidator(data)) {
         console.log('ERROR: data didn\'t pass the validation', nteValidator.errors);
+        console.log(data);
         res.status(400).send('data didn\'t pass the validation').end();
         return;
       }
@@ -51,7 +52,6 @@ app.post('/convert', jsonParser, async (req, res) => {
         }
 
         out.length = glaData.date.length;
-        console.log(out);
         res.send(out).end();
       } catch (err) {
         console.log('ERROR:', err);
@@ -61,7 +61,7 @@ app.post('/convert', jsonParser, async (req, res) => {
 
     case 'gte': //geo to everything
       if (!gteValidator(data)) {
-        console.log('ERROR: data didn\'t pass the validation');
+        console.log('ERROR: data didn\'t pass the validation', gteValidator.errors);
         res.status(400).end('data didn\'t pass the validation');
         return;
       }
@@ -71,6 +71,10 @@ app.post('/convert', jsonParser, async (req, res) => {
         time: [ data.time ],
       };
 
+      if (data.geod) {
+        res.status(400).send('geod is not supported yet').end();
+        return;
+      }
 
       let geo = [], lla = [];
       if (data.geod) {
@@ -85,7 +89,8 @@ app.post('/convert', jsonParser, async (req, res) => {
       const glVals = utils.differ(getters['geolla'], data.filters);
       const glData = {
         'geo.X':    [geo[0]], 'geo.Y':    [geo[1]], 'geo.Z':    [geo[2]],
-        'geod.Lat': [lla[0]], 'geod.Lon': [lla[1]], 'geod.Alt': [lla[2]],
+        //'geod.Lat': [lla[0]], 'geod.Lon': [lla[1]], 'geod.Alt': [lla[2]],
+        'geod.Lat': [NaN], 'geod.Lon': [NaN], 'geod.Alt': [NaN],
       };
       out = { ...out, ...utils.filtered(glData, glVals) };
 

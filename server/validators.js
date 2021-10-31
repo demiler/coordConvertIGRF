@@ -12,7 +12,7 @@ const nteValidator = validator({
     norad:   { type: 'number', },
     filters: { type: 'array', minItems: 1, items: { type: 'string' }},
   }
-});
+}, { includeErrors: true });
 
 const gteValidator = validator({
   type: 'object',
@@ -24,6 +24,6 @@ const gteValidator = validator({
     time:    { type: 'string', pattern: '^((2[0-3]|[0-1]\\d):[0-5]\\d:[0-5]\\d|23:59:60)$' },
     filters: { type: 'array', minItems: 1, items: { type: 'string' }},
   }
-});
+}, { includeErrors: true });
 
 module.exports = { gteValidator, nteValidator };
