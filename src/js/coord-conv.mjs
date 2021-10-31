@@ -65,6 +65,14 @@ class CoordConv extends LitElement {
       type: this.tab
     };
 
+    if (body.type === 'nte') {
+      const currDT = new Date().toISOString().replace(/\.\d+Z$/, '').split('T');
+      if (body.date[0] === '') body.date[0] = currDT[0];
+      if (body.date[1] === '') body.date[1] = currDT[0];
+      if (body.time[0] === '') body.time[0] = currDT[1];
+      if (body.time[1] === '') body.time[1] = currDT[1];
+    }
+
     fetch(`${window.location.href}convert`, {
       method: 'POST',
       headers: {

@@ -54,7 +54,7 @@ class DatePicker extends LitElement {
     this.year = today.getFullYear();
     this.placeholder = 'dd mm yyyy';
 
-    this.min = "1900-1-1";
+    this.min = "1900-01-01";
     this.max = "2029-12-31";
     this.value = this.formatDate();
     this.prettyDate = this.makePretty();
@@ -137,7 +137,7 @@ class DatePicker extends LitElement {
     const day = date.getDate();
     const month = date.getMonth();
     const year = date.getFullYear();
-    const value = this.formatDate(day, month, padNumber(year, 4));
+    const value = this.formatDate(day, month, year);
 
     if (!isValidDate(date) || value < this.min || value > this.max)
         return;
@@ -157,7 +157,7 @@ class DatePicker extends LitElement {
   }
 
   formatDate(day = this.day, month = this.month, year = this.year) {
-    return year + "-" + (month + 1) + "-" + day;
+    return padNumber(year, 4) + "-" + padNumber((month + 1), 2) + "-" + padNumber(day, 2);
   }
 
   changeDate(e) {
@@ -193,9 +193,9 @@ class DatePicker extends LitElement {
   getData() {
     return {
         value: this.value,
-        day: this.day,
+        day  : this.day,
         month: this.month,
-        year: this.year,
+        year : this.year,
     }
   }
 }

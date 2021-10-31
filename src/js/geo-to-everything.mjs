@@ -127,8 +127,8 @@ class GeoToEverything extends LitElement {
 
   getData() {
     return {
-      coord: this.coord,
-      geod: this.geod,
+      coord: Object.values(this.coord),
+      geod : this.geod,
       time : this.time,
       date : this.date,
       filters: this.filters
