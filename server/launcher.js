@@ -49,14 +49,6 @@ class Launcher {
 
 
   async __feedProgram(proc, dtgGenerator, progname) {
-    let gened = dtgGenerator.next();
-    while (!gened.done) {
-      const { date, time, geo } = gened.value;
-      proc.stdin.write(`${date} ${time} ${geo}\n`);
-      gened = dtgGenerator.next();
-    }
-    proc.stdin.end();
-
     let errors;
     const ac = new AbortController();
     const to = setTimeout(() => {
@@ -71,7 +63,17 @@ class Launcher {
     });
 
     try {
-      const raw = await once(proc.stdout, 'data', { signal: ac.signal });
+      let raw = '';
+      let gened = dtgGenerator.next();
+      while (!gened.done) {
+        const { date, time, geo } = gened.value;
+        proc.stdin.write(`${date} ${time} ${geo}\n`);
+        raw += await once(proc.stdout, 'data', { signal: ac.signal });
+        gened = dtgGenerator.next();
+      }
+      proc.stdin.end();
+      clearTimeout(to);
+
       return raw
         .toString()
         .split('\n')

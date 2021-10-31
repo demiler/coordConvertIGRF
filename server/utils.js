@@ -21,10 +21,4 @@ const explode = (arr, name, subnames) => {
   );
 };
 
-const getCoord = (geo, lla = false) => {
-  return lla
-    ? [ geo['Lat'], geo['Lon'], geo['Alt'] ]
-    : [ geo['geo.X'], geo['geo.Y'], geo['geo.Z'] ]
-}
-
-module.exports = { stringify, filtered, explode, differ }
+module.exports = { stringify, filtered, explode, differ };

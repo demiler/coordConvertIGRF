@@ -2,6 +2,7 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const path = require('path');
 const utils = require('./utils.js');
+const coords = require('./coords.js');
 const launcher = require('./launcher.js');
 const getters = require('./getters.js');
 const { nteValidator, gteValidator } = require('./validators.js');
@@ -48,8 +49,10 @@ app.post('/convert', jsonParser, async (req, res) => {
             out = {...out, ...utils.filtered(progOut, vals)};
           }
         }
-        res.send(out);
-        res.end();
+
+        out.length = glaData.date.length;
+        console.log(out);
+        res.send(out).end();
       } catch (err) {
         console.log('ERROR:', err);
         res.status(500).send(err).end();
@@ -68,6 +71,24 @@ app.post('/convert', jsonParser, async (req, res) => {
         time: [ data.time ],
       };
 
+
+      let geo = [], lla = [];
+      if (data.geod) {
+        lla = data.coord;
+        geo = coords.lla2geo(lla[0], lla[1], lla[2]);
+      }
+      else {
+        geo = data.coord;
+        lla = coords.geo2lla(geo[0], geo[1], geo[2]);
+      }
+
+      const glVals = utils.differ(getters['geolla'], data.filters);
+      const glData = {
+        'geo.X':    [geo[0]], 'geo.Y':    [geo[1]], 'geo.Z':    [geo[2]],
+        'geod.Lat': [lla[0]], 'geod.Lon': [lla[1]], 'geod.Alt': [lla[2]],
+      };
+      out = { ...out, ...utils.filtered(glData, glVals) };
+
       try {
         for (const prog in getters) {
           if (prog === 'geolla') continue;
@@ -78,6 +99,7 @@ app.post('/convert', jsonParser, async (req, res) => {
           }
         }
 
+        out.length = 1;
         res.send(out).end();
       }
       catch (err) {
