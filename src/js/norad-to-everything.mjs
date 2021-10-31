@@ -39,7 +39,6 @@ class NoradToEverything extends LitElement {
 
   checkForBlank() {
     const { date, time } = this.inputs;
-    console.log(this.inputs, date, time);
     if (this.inputs.norad === null) return 'no norad id entered';
     if (date[0] === '' && time[0] !== '') return 'from time entered but not date';
     if (date[0] !== '' && time[0] === '') return 'from date entered but not time';

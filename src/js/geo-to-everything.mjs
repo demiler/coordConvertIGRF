@@ -126,13 +126,13 @@ class GeoToEverything extends LitElement {
   }
 
   getData() {
-    const data = {
+    return {
+      coord: this.coord,
+      geod: this.geod,
       time : this.time,
       date : this.date,
       filters: this.filters
     }
-    data[this.geod ? 'geod' : 'geo'] = this.coord;
-    return data;
   }
 };
 
