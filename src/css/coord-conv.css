@@ -50,7 +50,7 @@ nav div[current] {
   padding: .5rem;
   border-radius: 10px;
   width: fit-content;
-  margin-top: 20px;
+  margin: 20px 0;
 
   transition: .3s;
   opacity: 0;

@@ -55,7 +55,7 @@ class CoordConv extends LitElement {
         ${[...Array(this.table.length).keys()].map(i => html`
           <tr>
             ${Object.entries(this.table).map(cell => (cell[0] === 'length') ?html``:html`
-            <td class="table-${cell[0]}">${cell[1][i]}</td>
+            <td class="table-${cell[0]}">${(cell[1][i] !== null) ? cell[1][i] : 'NaN'}</td>
           `)}
           </tr>
         `)}

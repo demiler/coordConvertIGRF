@@ -166,7 +166,7 @@ class DatePicker extends LitElement {
     this.sendChange();
   }
 
-  sendChange(type) {
+  sendChange() {
     let event = new CustomEvent('update', {
         detail: this.getData(),
         bubbles: true,
@@ -191,12 +191,13 @@ class DatePicker extends LitElement {
   }
 
   getData() {
-    return {
-        value: this.value,
-        day  : this.day,
-        month: this.month,
-        year : this.year,
-    }
+    return this.value;
+    //return {
+        //value: this.value,
+        //day  : this.day,
+        //month: this.month,
+        //year : this.year,
+    //}
   }
 }
 
