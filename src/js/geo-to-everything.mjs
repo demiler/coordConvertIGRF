@@ -121,11 +121,11 @@ class GeoToEverything extends LitElement {
   }
 
   updateTime(e) {
-    this.time = e.detail.value;
+    this.time = e.detail;
   }
 
   updateDate(e) {
-    this.date = e.detail.value;
+    this.date = e.detail;
   }
 
   getData() {

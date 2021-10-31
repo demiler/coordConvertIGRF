@@ -51,8 +51,8 @@ class NoradInput extends LitElement {
       case 'norad':    this.norad = Number(val); break;
       case 'dateFrom': this.date[0] = val; break;
       case 'dateTo':   this.date[1] = val; break;
-      case 'timeFrom': this.time[0] = val.value; break;
-      case 'timeTo':   this.time[1] = val.value; break;
+      case 'timeFrom': this.time[0] = val; break;
+      case 'timeTo':   this.time[1] = val; break;
       case 'step':     this.step = Math.max(1, Number(val));
                        tar.value = this.step; break;
     }

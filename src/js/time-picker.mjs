@@ -66,7 +66,7 @@ class TimePicker extends LitElement {
     //this.inputEl.value = this.value;
     this.inputEl.forceUpdate(this.value);
 
-    if (this.value == '') {
+    if (!this.value) {
       this.time = this.hours = this.mins = this.secs = undefined;
       this.sendChange();
       return;
@@ -109,7 +109,7 @@ class TimePicker extends LitElement {
   }
 
   change(e) {
-    if (this.value !== '') {
+    if (this.value) {
       this.formatValue();
       this.sendChange();
     }
@@ -139,13 +139,14 @@ class TimePicker extends LitElement {
   }
 
   getData() {
-    return {
-      value: this.value,
-      hours: this.hours,
-      mins: this.mins,
-      secs: this.secs,
-      time: this.time
-    };
+    return this.value;
+    //return {
+      //value: this.value,
+      //hours: this.hours,
+      //mins: this.mins,
+      //secs: this.secs,
+      //time: this.time
+    //};
   }
 }
 
