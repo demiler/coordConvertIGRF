@@ -85,8 +85,8 @@ class GeoToEverything extends LitElement {
   }
 
   sendConvert() {
-    const err = this.checkForBlank();
-    if (err !== null) return this.sendError(err);
+    //const err = this.checkForBlank();
+    //if (err !== null) return this.sendError(err);
 
     this.dispatchEvent(new CustomEvent('convert', {
       detail: this.getData(),

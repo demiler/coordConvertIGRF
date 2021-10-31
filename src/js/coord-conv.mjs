@@ -81,11 +81,25 @@ class CoordConv extends LitElement {
       },
       body: JSON.stringify(body)
     })
-    .then(res => res.json())
-    .then(res => {
-      console.log(res);
+    .then(async res => {
+      switch (res.status) {
+        case 400:
+        case 500:
+          const err = await res.text();
+          this.displayError(`Server error: ${err}`, 10000);
+          break;
+
+        case 200:
+          const data = await res.json();
+          console.log(data);
+          break;
+
+        default:
+          this.displayError(`Unknown server response: ${res.status}`);
+      };
     })
     .catch(err => {
+      this.displayError('Internal error, unable to send data');
       console.log('some error', err);
     });
   }
