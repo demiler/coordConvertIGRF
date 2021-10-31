@@ -19,6 +19,9 @@
   cursor: pointer;
   user-select: none;
   transition: .2s;
+
+  box-sizing: border-box;
+  height: 100%;
 }
 
 #main[active] {

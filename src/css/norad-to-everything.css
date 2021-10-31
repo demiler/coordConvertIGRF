@@ -39,4 +39,6 @@
   width: fit-content;
   font-size: 1.3rem;
   padding: .3rem 2rem;
+  line-height: 0;
+  user-select: none;
 }
