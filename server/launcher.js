@@ -7,7 +7,7 @@ const execFile = promisify(require('child_process').execFile);
 
 class Launcher {
   async geolla (norad, startDT = undefined, endDT = undefined, resolution = 1) {
-    const { stdout } = await execFile('./progs/geolla.py');
+    const { stdout } = await execFile('./server/progs/geolla.py', [startDT, endDT, resolution]);
     const lines = stdout.trim().split('\n');
 
     const date = [];
@@ -51,20 +51,24 @@ class Launcher {
     let gened = dtgGenerator.next();
     while (!gened.done) {
       const { date, time, geo } = gened.value;
+      console.log(`${date} ${time} ${geo}\n`)
       proc.stdin.write(`${date} ${time} ${geo}\n`);
       gened = dtgGenerator.next();
     }
     proc.stdin.end();
+    console.log('end');
 
     let errors;
     const ac = new AbortController();
     proc.stderr.on('data', (err) => {
+      console.log('pizda');
       errors = err.toString();
       ac.abort();
     });
 
     try {
       const raw = await once(proc.stdout, 'data', { signal: ac.signal });
+      console.log('raw');
       return raw
         .toString()
         .split('\n')
@@ -79,7 +83,7 @@ class Launcher {
 
 
   async geo2LBOnly(date, time, geo) {
-    const proc = spawn('./geo2LBOnly', [], { cwd: './progs' });
+    const proc = spawn('./geo2LBOnly', [], { cwd: './server/progs' });
     const generator = this.__commonGenerator(date, time, geo);
     const values = await this.__feedProgram(proc, generator);
 
@@ -94,7 +98,7 @@ class Launcher {
 
 
   async geo2RDMLLGsmMltShadOnly(date, time, geo) {
-    const proc = spawn('./geo2RDMLLGsmMltShadOnly', [], { cwd: './progs' });
+    const proc = spawn('./geo2RDMLLGsmMltShadOnly', [], { cwd: './server/progs' });
     const generator = this.__commonGenerator(date, time, geo, true);
     const values = await this.__feedProgram(proc, generator);
 
@@ -107,7 +111,7 @@ class Launcher {
     }
 
     return {
-      ...utils.explode(dm, 'dm', ['Lat', 'Lon', 'Alt']),
+      ...utils.explode(dm, 'dm', ['R', 'Lat', 'Lon']),
       ...utils.explode(gsm, 'gsm', ['X', 'Y', 'Z']),
       mlt, shad
     };
@@ -115,7 +119,7 @@ class Launcher {
 
 
   async geo2BigrfOnly(date, time, geo) {
-    const proc = spawn('./geo2BigrfOnly', [], { cwd: './progs' });
+    const proc = spawn('./geo2BigrfOnly', [], { cwd: './server/progs' });
     const generator = this.__commonGenerator(date, time, geo);
     const values = await this.__feedProgram(proc, generator);
     return { ...utils.explode(values, 'magn', ['X', 'Y', 'Z', 'F']) };
@@ -124,7 +128,7 @@ class Launcher {
 
   async fromGeo(prog, date, time, geo) {
     if (prog in this) return await this[prog](date, time, geo);
-    else throw 'Wrong program name';
+    else throw 'Wrong program name - ' + prog;
   }
 };
 const launcher = new Launcher();

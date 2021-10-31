@@ -25,6 +25,7 @@
     "rollup-plugin-svg": "^2.0.0"
   },
   "dependencies": {
+    "@exodus/schemasafe": "^1.0.0-rc.6",
     "app-datepicker": "^4.5.3",
     "body-parser": "^1.19.0",
     "lit": "^2.0.2"

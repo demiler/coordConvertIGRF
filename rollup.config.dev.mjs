@@ -17,7 +17,8 @@ export default {
   plugins: [
     livereload({
       watch: 'dist',
-      exts: [ 'html', 'mjs', 'css' ]
+      exts: [ 'html', 'mjs', 'css' ],
+      delay: 300,
     }),
     postcss({
       inject: false,
