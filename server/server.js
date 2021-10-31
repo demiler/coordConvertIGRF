@@ -1,55 +1,14 @@
 const bodyParser = require('body-parser');
-const { validator } = require('@exodus/schemasafe')
-const { exec } = require('child_process');
 const express = require('express');
 const path = require('path');
 const utils = require('./utils.js');
 const launcher = require('./launcher.js');
+const getters = require('./getters.js');
+const { nteValidator, gteValidator } = require('./validators.js');
 
 const PORT = 8081
 const app = express()
 const jsonParser = bodyParser.json()
-
-const getters = {
-  'geolla':
-    [ 'geo.X', 'geo.Y', 'geo.Z', 'geod.Lat', 'geod.Lon', 'geod.Alt' ],
-  'geo2LBOnly':
-    [ 'l', 'b' ],
-  'geo2BigrfOnly':
-    [ 'magn.X', 'magn.Y', 'magn.Z', 'magn.F' ],
-  'geo2RDMLLGsmMltShadOnly':
-    [
-      'dm.R', 'dm.Lat', 'dm.Lon',
-      'gsm.X',  'gsm.Y',  'gsm.Z',
-      'mlt', 'shad'
-    ],
-};
-
-const nteValidator = validator({
-  type: 'object',
-  required: ['date', 'time', 'norad', 'filters'],
-  properties: {
-    date:    { type: 'array', minItems: 2, maxItems: 2, items: { type: 'string', format: 'date' }},
-    time:    { type: 'array', minItems: 2, maxItems: 2, items: {
-      type: 'string',
-      pattern: '^((2[0-3]|[0-1]\\d):[0-5]\\d:[0-5]\\d|23:59:60)$',
-    }},
-    norad:   { type: 'number', },
-    filters: { type: 'array', minItems: 1, items: { type: 'string' }},
-  }
-});
-
-const gteValidator = validator({
-  type: 'object',
-  required: ['coord', 'geod', 'date', 'time', 'filters'],
-  properties: {
-    coord:   { type: 'array', minItems: 3, maxItems: 3, items: { type: 'number' }},
-    geod:    { type: 'boolean' },
-    date:    { type: 'string', format: 'date', },
-    time:    { type: 'string', pattern: '^((2[0-3]|[0-1]\\d):[0-5]\\d:[0-5]\\d|23:59:60)$' },
-    filters: { type: 'array', minItems: 1, items: { type: 'string' }},
-  }
-});
 
 app.use('/', express.static(path.join(__dirname, '../dist')))
 
@@ -60,8 +19,8 @@ app.post('/convert', jsonParser, async (req, res) => {
   switch (data.type) {
     case 'nte': //norad to everything
       if (!nteValidator(data)) {
-        console.log('Error data didn\'t pass the validation', nteValidator.errors);
-        res.status(400).end();
+        console.log('ERROR: data didn\'t pass the validation', nteValidator.errors);
+        res.status(400).send('data didn\'t pass the validation').end();
         return;
       }
 
@@ -93,20 +52,20 @@ app.post('/convert', jsonParser, async (req, res) => {
         res.end();
       } catch (err) {
         console.log('ERROR:', err);
-        res.status(500).end();
+        res.status(500).send(err).end();
       }
       break;
 
     case 'gte': //geo to everything
       if (!gteValidator(data)) {
-        console.log('Error data didn\'t pass the validation');
-        res.status(400).end();
+        console.log('ERROR: data didn\'t pass the validation');
+        res.status(400).end('data didn\'t pass the validation');
         return;
       }
 
       let out = {
-        date: data.date,
-        time: data.time,
+        date: [ data.date ],
+        time: [ data.time ],
       };
 
       try {
@@ -119,21 +78,19 @@ app.post('/convert', jsonParser, async (req, res) => {
           }
         }
 
-        res.send(out);
-        res.end();
+        res.send(out).end();
       }
       catch (err) {
         console.log('ERROR:', err);
-        res.status(500).end();
+        res.status(500).send(err).end();
       }
       break;
 
     //case 'ntg': //norad to geo - depricated
       //break;
     default:
-      console.log('Error unknown data type:', data.type);
-      console.log(data);
-      res.status(400).end();
+      console.log('ERROR: unknown data type:', data.type);
+      res.status(400).end('unknown data type');
   }
 });
 

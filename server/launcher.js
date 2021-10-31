@@ -2,6 +2,7 @@ const { spawn } = require('child_process');
 const { promisify } = require('util');
 const { once } = require('events');
 const utils = require('./utils.js');
+const getters = require('./getters.js');
 
 const execFile = promisify(require('child_process').execFile);
 
@@ -47,28 +48,30 @@ class Launcher {
   }
 
 
-  async __feedProgram(proc, dtgGenerator) {
+  async __feedProgram(proc, dtgGenerator, progname) {
     let gened = dtgGenerator.next();
     while (!gened.done) {
       const { date, time, geo } = gened.value;
-      console.log(`${date} ${time} ${geo}\n`)
       proc.stdin.write(`${date} ${time} ${geo}\n`);
       gened = dtgGenerator.next();
     }
     proc.stdin.end();
-    console.log('end');
 
     let errors;
     const ac = new AbortController();
+    const to = setTimeout(() => {
+      proc.kill('SIGKILL');
+      errors = `calculation timeout for one of [${getters[progname].join(', ')}]`;
+      ac.abort();
+    }, 2000);
     proc.stderr.on('data', (err) => {
-      console.log('pizda');
+      clearTimeout(to);
       errors = err.toString();
       ac.abort();
     });
 
     try {
       const raw = await once(proc.stdout, 'data', { signal: ac.signal });
-      console.log('raw');
       return raw
         .toString()
         .split('\n')
@@ -85,7 +88,7 @@ class Launcher {
   async geo2LBOnly(date, time, geo) {
     const proc = spawn('./geo2LBOnly', [], { cwd: './server/progs' });
     const generator = this.__commonGenerator(date, time, geo);
-    const values = await this.__feedProgram(proc, generator);
+    const values = await this.__feedProgram(proc, generator, 'geo2LBOnly');
 
     const l = [], b = [];
     for (const vals of values) {
@@ -100,7 +103,7 @@ class Launcher {
   async geo2RDMLLGsmMltShadOnly(date, time, geo) {
     const proc = spawn('./geo2RDMLLGsmMltShadOnly', [], { cwd: './server/progs' });
     const generator = this.__commonGenerator(date, time, geo, true);
-    const values = await this.__feedProgram(proc, generator);
+    const values = await this.__feedProgram(proc, generator, 'geo2RDMLLGsmMltShadOnly');
 
     const dm = [], gsm = [], mlt = [], shad = [];
     for (const vals of values) {
@@ -121,7 +124,7 @@ class Launcher {
   async geo2BigrfOnly(date, time, geo) {
     const proc = spawn('./geo2BigrfOnly', [], { cwd: './server/progs' });
     const generator = this.__commonGenerator(date, time, geo);
-    const values = await this.__feedProgram(proc, generator);
+    const values = await this.__feedProgram(proc, generator, 'geo2BigrfOnly');
     return { ...utils.explode(values, 'magn', ['X', 'Y', 'Z', 'F']) };
   }
 
