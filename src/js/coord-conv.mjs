@@ -15,6 +15,7 @@ class CoordConv extends LitElement {
       tab: { type: String },
       showError: { type: Boolean },
       errorMessage: { type: String },
+      table: { type: Object },
     };
   }
 
@@ -24,23 +25,41 @@ class CoordConv extends LitElement {
     if (this.tab === null) this.tab = 'nte';
     this.errorMessage = '';
     this.showError = false;
+    this.table = {};
   }
 
   render() {
     return html`
-      <nav @click=${this.changeTab}>
-        <div id="nte" ?current=${this.tab === "nte"}>Norad ID to everything</div>
-        <div id="gte" ?current=${this.tab === "gte"}>GEO to everything</div>
-        <!--<div id="ntg" ?current=${this.tab === "ntg"}>Norad ID to GEO</div>-->
-      </nav>
+      <main>
+        <nav @click=${this.changeTab}>
+          <div id="nte" ?current=${this.tab === "nte"}>Norad ID to everything</div>
+          <div id="gte" ?current=${this.tab === "gte"}>GEO to everything</div>
+          <!--<div id="ntg" ?current=${this.tab === "ntg"}>Norad ID to GEO</div>-->
+        </nav>
 
-      <div id="content" @convert=${this.askConvert} @error=${this.handleError}>
-        ${this.renderTab()}
-      </div>
+        <div id="content" @convert=${this.askConvert} @error=${this.handleError}>
+          ${this.renderTab()}
+        </div>
 
-      <div id="error" ?active=${this.showError}>
-        Error: ${this.errorMessage}
-      </div>
+        <div id="error" ?active=${this.showError}>
+          Error: ${this.errorMessage}
+        </div>
+      </main>
+
+      <table id="table">
+        <tr class='header'>
+          ${Object.keys(this.table).map(th => (th === 'length') ? html`` : html`
+            <th class="table-${th}">${th}</th>
+          `)}
+        </tr>
+        ${[...Array(this.table.length).keys()].map(i => html`
+          <tr>
+            ${Object.entries(this.table).map(cell => (cell[0] === 'length') ?html``:html`
+            <td class="table-${cell[0]}">${cell[1][i]}</td>
+          `)}
+          </tr>
+        `)}
+      </table>
     `;
   }
 
@@ -90,12 +109,11 @@ class CoordConv extends LitElement {
           break;
 
         case 200:
-          const data = await res.json();
-          console.log(data);
+          this.table = await res.json();
           break;
 
         default:
-          this.displayError(`Unknown server response: ${res.status}`);
+          this.displayError(`Unknown server response status: ${res.status}`);
       };
     })
     .catch(err => {
@@ -105,6 +123,7 @@ class CoordConv extends LitElement {
   }
 
   changeTab(e) {
+    this.table = {};
     this.tab = e.target.id;
     localStorage.setItem('tab', this.tab);
   }

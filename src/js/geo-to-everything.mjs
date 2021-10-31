@@ -85,8 +85,8 @@ class GeoToEverything extends LitElement {
   }
 
   sendConvert() {
-    //const err = this.checkForBlank();
-    //if (err !== null) return this.sendError(err);
+    const err = this.checkForBlank();
+    if (err !== null) return this.sendError(err);
 
     this.dispatchEvent(new CustomEvent('convert', {
       detail: this.getData(),
@@ -115,6 +115,9 @@ class GeoToEverything extends LitElement {
     this.coord[e.target.id] = (e.detail === '')
       ? null
       : Number(e.target.value);
+    if (this.coord[e.target.id]) {
+      e.target.value = this.coord[e.target.id]
+    }
   }
 
   updateTime(e) {
