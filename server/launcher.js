@@ -3,12 +3,16 @@ const { promisify } = require('util');
 const { once } = require('events');
 const utils = require('./utils.js');
 const getters = require('./getters.js');
+const config = require('./config.js');
+const path = require('path');
 
 const execFile = promisify(require('child_process').execFile);
+const progsDir = path.join(__dirname, config.PROG_DIR);
 
 class Launcher {
   async geolla (norad, startDT = undefined, endDT = undefined, resolution = 1) {
-    const { stdout } = await execFile('./server/progs/geolla.py', [startDT, endDT, resolution]);
+    const progPath = path.join(progsDir, config.PROGS['geolla']);
+    const { stdout } = await execFile(progPath, [startDT, endDT, resolution]);
     const lines = stdout.trim().split('\n');
 
     const date = [];
@@ -21,9 +25,9 @@ class Launcher {
       date.push(out[0].split(' ')[0])
       time.push(out[0].split(' ')[1])
       geo.push(out.slice(1, 4).map(Number))
-      lla.push(out.slice(4).map(Number))
+      //lla.push(out.slice(4).map(Number))
     }
-    return { date, time, geo, lla };
+    return { date, time, geo, /*lla*/ };
   }
 
 
@@ -87,23 +91,26 @@ class Launcher {
   }
 
 
-  async geo2LBOnly(date, time, geo) {
-    const proc = spawn('./geo2LBOnly', [], { cwd: './server/progs' });
+  async geo2LB_Lat_Lon_Alt(date, time, geo) {
+    const progPath = path.join(progsDir, config.PROGS['geo2LB_Lat_Lon_Alt']);
+    const proc = spawn(progPath, [], { cwd: progsDir });
     const generator = this.__commonGenerator(date, time, geo);
-    const values = await this.__feedProgram(proc, generator, 'geo2LBOnly');
+    const values = await this.__feedProgram(proc, generator, 'geo2LB_Lat_Lon_Alt');
 
-    const l = [], b = [];
+    const l = [], b = [], geod = []
     for (const vals of values) {
       l.push(vals[0]);
       b.push(vals[1]);
+      geod.push(vals.slice(2, 5))
     }
 
-    return { l, b };
+    return { l, b, ...utils.explode(geod, 'geod', ['Lat', 'Lon', 'Alt']) };
   }
 
 
   async geo2RDMLLGsmMltShadOnly(date, time, geo) {
-    const proc = spawn('./geo2RDMLLGsmMltShadOnly', [], { cwd: './server/progs' });
+    const progPath = path.join(progsDir, config.PROGS['geo2RDMLLGsmMltShadOnly']);
+    const proc = spawn(progPath, [], { cwd: progsDir });
     const generator = this.__commonGenerator(date, time, geo, true);
     const values = await this.__feedProgram(proc, generator, 'geo2RDMLLGsmMltShadOnly');
 
@@ -124,7 +131,8 @@ class Launcher {
 
 
   async geo2BigrfOnly(date, time, geo) {
-    const proc = spawn('./geo2BigrfOnly', [], { cwd: './server/progs' });
+    const progPath = path.join(progsDir, config.PROGS['geo2BigrfOnly']);
+    const proc = spawn(progPath, [], { cwd: progsDir });
     const generator = this.__commonGenerator(date, time, geo);
     const values = await this.__feedProgram(proc, generator, 'geo2BigrfOnly');
     return { ...utils.explode(values, 'magn', ['X', 'Y', 'Z', 'F']) };

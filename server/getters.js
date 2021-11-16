@@ -1,8 +1,8 @@
 const getters = {
   'geolla':
-    [ 'geo.X', 'geo.Y', 'geo.Z', 'geod.Lat', 'geod.Lon', 'geod.Alt' ],
-  'geo2LBOnly':
-    [ 'l', 'b' ],
+    [ 'geo.X', 'geo.Y', 'geo.Z' ],
+  'geo2LB_Lat_Lon_Alt':
+    [ 'l', 'b', 'geod.Lat', 'geod.Lon', 'geod.Alt'],
   'geo2BigrfOnly':
     [ 'magn.X', 'magn.Y', 'magn.Z', 'magn.F' ],
   'geo2RDMLLGsmMltShadOnly':

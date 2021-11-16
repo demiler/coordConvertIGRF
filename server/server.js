@@ -1,17 +1,37 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const path = require('path');
+const existsSync = require('fs').existsSync;
 const utils = require('./utils.js');
 const coords = require('./coords.js');
 const launcher = require('./launcher.js');
 const getters = require('./getters.js');
+const config = require('./config.js');
+const { createSimpleLogger } = require('simple-node-logger');
 const { nteValidator, gteValidator } = require('./validators.js');
 
-const PORT = 8081
+
 const app = express()
+const logger = createSimpleLogger({ dateFormat: 'YYYY-MM-DD HH:mm:ss' });
 const jsonParser = bodyParser.json()
 
-app.use('/', express.static(path.join(__dirname, '../dist')))
+
+for (const prog of Object.values(config.PROGS)) {
+  progpath = path.join(__dirname, config.PROG_DIR, prog)
+  if (!existsSync(progpath)) {
+    console.error(`Error: program ${prog} dosen't exsists in ${config.PROG_DIR}`);
+    process.exit(1);
+  }
+}
+logger.log('Convert programs are accessable');
+
+if (!existsSync(path.join(__dirname, config.WS_DIR))) {
+  console.error(`Website folder dosen't exsists`);
+  process.exit(1);
+}
+
+
+app.use('/', express.static(path.join(__dirname, config.WS_DIR)))
 
 app.post('/convert', jsonParser, async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
@@ -20,8 +40,7 @@ app.post('/convert', jsonParser, async (req, res) => {
   switch (data.type) {
     case 'nte': //norad to everything
       if (!nteValidator(data)) {
-        console.log('ERROR: data didn\'t pass the validation', nteValidator.errors);
-        console.log(data);
+        loggger.error('data didn\'t pass the validation', nteValidator.errors);
         res.status(400).send('data didn\'t pass the validation').end();
         return;
       }
@@ -44,24 +63,25 @@ app.post('/convert', jsonParser, async (req, res) => {
             const progOut = (prog === 'geolla')
               ? {
                   ...utils.explode(glaData['geo'], 'geo',  ['X', 'Y', 'Z']),
-                  ...utils.explode(glaData['lla'], 'geod', ['Lat', 'Lon', 'Alt'])
+                  //...utils.explode(glaData['lla'], 'geod', ['Lat', 'Lon', 'Alt'])
                 }
               : await launcher.fromGeo(prog, glaData['date'], glaData['time'], glaData['geo']);
             out = {...out, ...utils.filtered(progOut, vals)};
           }
         }
 
+        logger.info('Successfully converted for NTE');
         out.length = glaData.date.length;
         res.send(out).end();
       } catch (err) {
-        console.log('ERROR:', err);
+        logger.error('Something went wrong during NTE convresion:\n', err);
         res.status(500).send(err).end();
       }
       break;
 
     case 'gte': //geo to everything
       if (!gteValidator(data)) {
-        console.log('ERROR: data didn\'t pass the validation', gteValidator.errors);
+        logger.error('data didn\'t pass the validation', gteValidator.errors);
         res.status(400).end('data didn\'t pass the validation');
         return;
       }
@@ -83,15 +103,20 @@ app.post('/convert', jsonParser, async (req, res) => {
       }
       else {
         geo = data.coord;
-        lla = coords.geo2lla(geo[0], geo[1], geo[2]);
+        //lla = coords.geo2lla(geo[0], geo[1], geo[2]);
       }
 
       const glVals = utils.differ(getters['geolla'], data.filters);
       const glData = {
         'geo.X':    [geo[0]], 'geo.Y':    [geo[1]], 'geo.Z':    [geo[2]],
-        //'geod.Lat': [lla[0]], 'geod.Lon': [lla[1]], 'geod.Alt': [lla[2]],
-        'geod.Lat': [NaN], 'geod.Lon': [NaN], 'geod.Alt': [NaN],
       };
+      if (data.geod) {
+        glData['geod.Lat'] = [lla[0]];
+        glData['geod.Lon'] = [lla[1]];
+        glData['geod.Alt'] = [lla[2]];
+        const excludeFilters = ['geod.Lat', 'geod.Lon', 'geod.Alt']
+        data.filters = data.filters.filter(x => !excludeFilters.includes(x))
+      }
       out = { ...out, ...utils.filtered(glData, glVals) };
 
       try {
@@ -104,11 +129,12 @@ app.post('/convert', jsonParser, async (req, res) => {
           }
         }
 
+        logger.info('Successfully converted for GTE');
         out.length = 1;
         res.send(out).end();
       }
       catch (err) {
-        console.log('ERROR:', err);
+        logger.error('Something went wrong during NTE convresion:\n', err);
         res.status(500).send(err).end();
       }
       break;
@@ -116,11 +142,11 @@ app.post('/convert', jsonParser, async (req, res) => {
     //case 'ntg': //norad to geo - depricated
       //break;
     default:
-      console.log('ERROR: unknown data type:', data.type);
+      logger.error(`Unkown data type '${data.type}'`);
       res.status(400).end('unknown data type');
   }
 });
 
-app.listen(PORT, () => {
-  console.log('Server started');
+app.listen(config.PORT, () => {
+  logger.info(`Server started on port ${config.PORT}`);
 });

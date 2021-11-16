@@ -1,57 +1,24 @@
-const a = 6378137; //Earth radius
 const f = 0.0033528106647474805; //Earth flattening
-const b = 6356752.3142; //Earth polar radius
-const a2 = a*a;
-const b2 = b*b;
+const EarthEquator = 6378.137;
 
-const e = Math.sqrt((a2 - b2) / a2);
-const eprime = Math.sqrt((a2 - b2) / b2);
-
-const getN = (lat) => {
-  const sinlat = Math.sin(lat);
-  const denom = Math.sqrt(1-e*e*sinlat*sinlat);
-  return a / denom;
-}
-
-function geo2lla(x, y, z) {
-  const p = Math.sqrt(x*x + y*y);
-  const theta = Math.atan((z * a) / (p * b));
-
-  const sintheta = Math.sin(theta);
-  const costheta = Math.cos(theta);
-
-  const num = z + eprime * eprime * b * sintheta * sintheta * sintheta;
-  const denom = p - e * e * a * costheta * costheta * costheta;
-
-  //Now calculate LLA
-  let lat  = Math.atan(num / denom);
-  let lon = Math.atan(y / x);
-  const N = getN(lat);
-  let alt  = (p / Math.cos(lat)) - N;
-
-  if (x < 0 && y < 0) {
-      lon = lon - Math.PI;
-  }
-
-  if (x < 0 && y > 0) {
-      lon = lon + Math.PI;
-  }
-
-  return [lat, lon, alt];
-}
+function deg2rad(deg) { return deg * Math.PI / 180.0; }
 
 function lla2geo(lat, lon, alt) {
-  //Auxiliary values first
-  const N = getN(lat);
-  const ratio = (b2 / a2);
+  lat = deg2rad(lat);
+  lon = deg2rad(lon);
 
-  //Now calculate the Cartesian coordinates
-  const x = (N + alt) * Math.cos(lat) * Math.cos(lon);
-  const y = (N + alt) * Math.cos(lat) * Math.sin(lon);
+  const sqared = x => x*x
 
-  //Sine of lat looks right here
-  const z = (ratio * N + alt) * Math.sin(lat);
+  const latcos2 = sqared(Math.cos(lat))
+  const latsin2 = sqared(Math.sin(lat))
+  const omf2    = sqared(1.0 - f)
+  c = 1.0 / Math.sqrt(latcos2 + omf2 * latsin2)
+  s = omf2 / Math.sqrt(latcos2 + omf2 * latsin2)
+
+  x = (EarthEquator * c + alt) * Math.cos(lat) * Math.cos(lon);
+  y = (EarthEquator * c + alt) * Math.cos(lat) * Math.sin(lon);
+  z = (EarthEquator * s + alt) * Math.sin(lat);
   return [x, y, z];
 }
 
-module.exports = { geo2lla, lla2geo };
+module.exports = { lla2geo };
