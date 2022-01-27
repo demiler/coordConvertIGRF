@@ -19,13 +19,13 @@ class ToggleButton extends LitElement {
 
   render() {
     return html`
-      <div
+      <button
           id='button'
           ?active=${this.value}
           @click=${this.clicked}
       >
         <slot></slot>
-      </div>
+      </button>
     `;
   }
 

@@ -3,6 +3,7 @@
 }
 
 #button {
+  border: none;
   background-color: var(--color-inactive);
   padding: .2rem .4rem;
   border-radius: 8px;

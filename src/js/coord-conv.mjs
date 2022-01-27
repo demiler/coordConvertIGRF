@@ -32,8 +32,8 @@ class CoordConv extends LitElement {
     return html`
       <main>
         <nav @click=${this.changeTab}>
-          <div id="nte" ?current=${this.tab === "nte"}>Norad ID to everything</div>
-          <div id="gte" ?current=${this.tab === "gte"}>GEO to everything</div>
+          <button id="nte" ?current=${this.tab === "nte"}>Norad ID to everything</button>
+          <button id="gte" ?current=${this.tab === "gte"}>GEO to everything</button>
           <!--<div id="ntg" ?current=${this.tab === "ntg"}>Norad ID to GEO</div>-->
         </nav>
 

@@ -22,9 +22,13 @@ nav {
   border-radius: 10px;
   overflow: hidden;
   margin-bottom: 20px;
+  min-width: 560px;
 }
 
-nav div {
+nav button {
+  display: inline;
+  border: none;
+
   flex: 1;
   padding: 4px 8px;
   background-color: var(--color-inactive);
@@ -34,12 +38,16 @@ nav div {
   font-size: 1.6rem;
 }
 
-nav div:not(:last-child) {
+nav button:not(:last-child) {
   border-right: 3px solid #aaa;
 }
 
-nav div[current] {
+nav button[current] {
   background-color: var(--color-active);
+}
+
+nav button:focus-visible {
+  filter: brightness(1.04);
 }
 
 #error {
