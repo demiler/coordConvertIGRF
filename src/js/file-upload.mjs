@@ -11,26 +11,48 @@ class FileUpload extends LitElement {
 
   static get properties() {
     return {
-      file: { type: Object },
+      file: { type: Object, reflect: true },
     };
   }
 
   render() {
     return html`
-      <button id="cancel">${unsafeSVG(crossIco)}</button>
-      <span id="button-wrap">
-        <input type="file" accept="text/*" multiple
-          @input=${this.getFile}>
-        <button id="upload">${unsafeSVG(uploadIco)} Upload File</button>
+      <button id="cancel"
+        title="Remove file"
+        @click=${this.removeFile}
+        ?active=${this.file}
+      >${unsafeSVG(crossIco)}</button>
+      <span id="input-wrap">
+        <input type="file"
+          accept="text/*"
+          @input=${this.getFile}
+        >
+        <span id="button-wrap">
+          <button id="upload" tabindex="-1">${unsafeSVG(uploadIco)} Upload File</button>
+          <span id="filename"
+            ?active=${this.file}
+          >${this.file ? this.file.name : 'No file' }</span>
+        </span>
       </span>
     `;
   }
 
+  sendUpdate() {
+    this.dispatchEvent(new CustomEvent('update', {
+      detail: this.file,
+      bubbles: false,
+      composed: true
+    }));
+  }
+
   getFile(e) {
-    let filename = e.target.value.replace('C:\\fakepath\\', '')
-    console.log(e)
-    console.log(filename)
-    console.log(e.target.value)
+    this.file = e.target.files[0];
+    this.sendUpdate();
+  }
+
+  removeFile(e) {
+    this.file = undefined;
+    this.sendUpdate();
   }
 }
 
