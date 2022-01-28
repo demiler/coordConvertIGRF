@@ -5,6 +5,7 @@ import './filters-all.mjs';
 import './time-picker.mjs';
 import './date-picker.mjs';
 import './text-input.mjs';
+import './file-upload.mjs';
 import geoIco from '../../assets/geo_icon.svg';
 import geodIco from '../../assets/geod_icon.svg';
 
@@ -16,6 +17,7 @@ class GeoToEverything extends LitElement {
   static get properties() {
     return {
       geod: { type: Boolean },
+      file: { type: String },
     };
   }
 
@@ -26,24 +28,28 @@ class GeoToEverything extends LitElement {
     this.geod = false;
     this.date = '';
     this.time = '';
+    this.file = undefined;
   }
 
   render() {
     return html`
-      <div id="file-upload">
-        <label>format: "YYYY-MM-DD HH:MM:SS, XGEO, YGEO, ZGEO"</label>
-        <input type="file">
+      <div id="upload">
+        <label>format: ${this.geod
+          ? "YYYY-MM-DD HH:MM:SS, LAT, LON, ALT"
+          : "YYYY-MM-DD HH:MM:SS, XGEO, YGEO, ZGEO"
+        }</label>
+        <file-upload id="upload" @update=${this.updateFile}></file-upload>
       </div>
 
-      <div class='group-label' id='coord-labels'>
-          <label>${this.geod ? 'Lat' : 'X'}</label>
-          <label>${this.geod ? 'Lon' : 'Y'}</label>
-          <label>${this.geod ? 'Alt' : 'Z'}</label>
+      <div class="group-label" id="coord-labels">
+          <label>${this.geod ? "Lat" : "X"}</label>
+          <label>${this.geod ? "Lon" : "Y"}</label>
+          <label>${this.geod ? "Alt" : "Z"}</label>
       </div>
-      <div class='group-label' id="filters-label">Filters</div>
+      <div class="group-label" id="filters-label">Filters</div>
 
-      <div id='inputs'>
-        <label id='geo'>${this.geod ? 'GEOD' : 'GEO'}:</label>
+      <div id="inputs" ?hasFile=${this.file}>
+        <label id="geo">${this.geod ? "GEOD" : "GEO"}:</label>
         <span id="coord-input" @input=${this.updateCoord}>
           <text-input id="x" type="number" value=${this.coord.x}></text-input>
           <text-input id="y" type="number" value=${this.coord.y}></text-input>
@@ -71,7 +77,7 @@ class GeoToEverything extends LitElement {
           value=${this.time}
         ></time-picker>
 
-        <button @click=${this.sendConvert}>Convert to</button>
+        <button id="convert-button" @click=${this.sendConvert}>Convert to</button>
       </div>
 
 
@@ -81,9 +87,11 @@ class GeoToEverything extends LitElement {
 
   checkForBlank() {
     const coords = Object.values(this.coord);
-    if (coords.some(c => c === null)) return 'incorrect coordinates';
-    if (this.date === '') return 'no date entered';
-    if (this.time === '') return 'no time entered';
+    if (!this.file) {
+      if (coords.some(c => c === null)) return 'incorrect coordinates';
+      if (this.date === '') return 'no date entered';
+      if (this.time === '') return 'no time entered';
+    }
     if (this.filters.length === 0) return 'no filters choosen';
 
     return null;
@@ -133,13 +141,18 @@ class GeoToEverything extends LitElement {
     this.date = e.detail;
   }
 
+  updateFile(e) {
+    this.file = e.detail;
+  }
+
   getData() {
     return {
       coord: Object.values(this.coord),
       geod : this.geod,
       time : this.time,
       date : this.date,
-      filters: this.filters
+      filters: this.filters,
+      file: this.file
     }
   }
 };

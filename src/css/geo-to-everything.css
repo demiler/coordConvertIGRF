@@ -26,16 +26,14 @@ text-input {
   width: 100%;
 }
 
-#file-upload {
+#upload {
   grid-column: 1/3;
+  margin-bottom: 8px;
 }
 
-#file-upload label {
+#upload label {
   display: block;
-}
-
-#file-upload input button {
-  border: none;
+  margin-bottom: 5px;
 }
 
 #inputs {
@@ -44,6 +42,36 @@ text-input {
   gap: 10px;
   align-items: center;
   align-content: space-between;
+  position: relative;
+}
+
+#inputs:after {
+  content: '';
+
+  position: absolute;
+  left: -10px;
+  top: -25px;
+  width: 100%;
+  height: 100%;
+
+  padding: 20px 10px;
+
+  background: black;
+  transition: .5s;
+  pointer-events: none;
+  opacity: 0;
+}
+
+#inputs[hasfile]:after {
+  opacity: 0.2;
+  border-radius: 5px;
+  pointer-events: all;
+}
+
+#inputs[hasfile] #switch,
+#inputs[hasfile] #convert-button {
+  z-index: 1;
+  box-shadow: rgb(116 116 116 / 58%) 1px 1px 4px 2px;
 }
 
 #geo {
@@ -94,7 +122,10 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 5px;
   max-width: 120px;
+  background-color: white;
+  border-radius: 8px;
 }
 
 #track {
