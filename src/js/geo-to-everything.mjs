@@ -30,6 +30,11 @@ class GeoToEverything extends LitElement {
 
   render() {
     return html`
+      <div id="file-upload">
+        <label>format: "YYYY-MM-DD HH:MM:SS, XGEO, YGEO, ZGEO"</label>
+        <input type="file">
+      </div>
+
       <div class='group-label' id='coord-labels'>
           <label>${this.geod ? 'Lat' : 'X'}</label>
           <label>${this.geod ? 'Lon' : 'Y'}</label>

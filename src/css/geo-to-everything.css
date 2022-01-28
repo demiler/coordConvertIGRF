@@ -26,6 +26,18 @@ text-input {
   width: 100%;
 }
 
+#file-upload {
+  grid-column: 1/3;
+}
+
+#file-upload label {
+  display: block;
+}
+
+#file-upload input button {
+  border: none;
+}
+
 #inputs {
   display: grid;
   grid-template-columns: 3rem 1fr 1fr;
