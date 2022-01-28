@@ -79,28 +79,41 @@ class CoordConv extends LitElement {
   }
 
   askConvert(e) {
-    const body = {
-      ...e.detail,
-      type: this.tab
-    };
+    let fetchResponse = undefined;
 
-    if (body.type === 'nte') {
-      const currDT = new Date().toISOString().replace(/\.\d+Z$/, '').split('T');
-      if (!body.date[0]) body.date[0] = currDT[0];
-      if (!body.date[1]) body.date[1] = currDT[0];
-      if (!body.time[0]) body.time[0] = currDT[1];
-      if (!body.time[1]) body.time[1] = currDT[1];
+    if (e.detail.file) {
+      const data = new FormData();
+      data.append('file', e.detail.file);
+      data.append('geod', e.detail.geod);
+      data.append('filters', JSON.stringify(e.detail.filters));
+
+      fetchResponse = fetch(`${window.location.href}convert/file`, {
+        method: 'POST',
+        body: data
+      });
+    }
+    else {
+      const data = { ...e.detail, type: this.tab };
+
+      if (data.type === 'nte') {
+        const currDT = new Date().toISOString().replace(/\.\d+Z$/, '').split('T');
+        if (!data.date[0]) data.date[0] = currDT[0];
+        if (!data.date[1]) data.date[1] = currDT[0];
+        if (!data.time[0]) data.time[0] = currDT[1];
+        if (!data.time[1]) data.time[1] = currDT[1];
+      }
+
+      fetchResponse = fetch(`${window.location.href}convert`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
     }
 
-    fetch(`${window.location.href}convert`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify(body)
-    })
-    .then(async res => {
+    fetchResponse.then(async res => {
       switch (res.status) {
         case 400:
         case 500:
