@@ -1,0 +1,117 @@
+:host {
+  display: flex;
+  gap: 10px;
+  height: 30px;
+  width: auto;
+}
+
+input {
+  opacity: .0;
+  border: 1px solid red;
+  padding: 0;
+  margin: 0;
+  display: inline;
+  box-sizing: border-box;
+}
+
+button {
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+#cancel svg {
+  width: 70%;
+  height: 70%;
+}
+
+#input-wrap svg {
+  width: auto;
+  height: 75%;
+  margin-left: -5px;
+  margin-right: 5px;
+  overflow: visible;
+}
+
+#input-wrap input,
+#input-wrap #button-wrap {
+  height: 100%;
+  width: 100%;
+}
+
+#input-wrap {
+  position: relative;
+  cursor: pointer;
+}
+
+#input-wrap input {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+#input-wrap #button-wrap {
+  pointer-events: none;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#input-wrap #upload {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 3px;
+
+  border-radius: 8px;
+  min-width: 120px;
+  height: 100%;
+
+  background-color: var(--color-active);
+  transition: .2s;
+}
+
+#input-wrap #filename {
+  white-space: nowrap;
+  font-size: .9em;
+  color: #666;
+}
+
+#input-wrap #filename[active] {
+  color: black;
+  text-decoration: underline;
+}
+
+input:focus-visible + #button-wrap #upload,
+#input-wrap:hover #upload {
+  filter: brightness(1.05);
+}
+
+input:focus-visible + #button-wrap path:first-child,
+#input-wrap:hover path:first-child {
+  animation: .7s linear 0s infinite normal slideup;
+}
+
+@keyframes slideup {
+  from { transform: translateY(0); }
+  to { transform: translateY(-12px); }
+}
+
+#cancel {
+  display: flex;
+  width: auto;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+  filter: grayscale(.5);
+  opacity: .8;
+}
+
+#cancel[active] {
+  filter: grayscale(0);
+}
