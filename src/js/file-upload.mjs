@@ -11,7 +11,7 @@ class FileUpload extends LitElement {
 
   static get properties() {
     return {
-      file: { type: Object, reflect: true },
+      file: { type: Object },
     };
   }
 
@@ -22,8 +22,9 @@ class FileUpload extends LitElement {
         @click=${this.removeFile}
         ?active=${this.file}
       >${unsafeSVG(crossIco)}</button>
+
       <span id="input-wrap">
-        <input type="file"
+        <input id="input-field" type="file"
           accept="text/*"
           @input=${this.getFile}
         >
@@ -52,6 +53,7 @@ class FileUpload extends LitElement {
 
   removeFile(e) {
     this.file = undefined;
+    this.shadowRoot.getElementById('input-field').value = '';
     this.sendUpdate();
   }
 }

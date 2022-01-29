@@ -18,7 +18,11 @@
   #filters-label {
     justify-self: center;
     margin-top: 20px;
-    grid-row: 3;
+    grid-row: 4;
+  }
+
+  #upload {
+    grid-column: 1/2 !important;
   }
 }
 
@@ -141,7 +145,7 @@ button {
 }
 
 #ball {
-  --size: 14px;
+  --size: 15px;
   width: var(--size);
   height: var(--size);
   background: #7970ff;

@@ -61,7 +61,7 @@ class GeoToEverything extends LitElement {
           value=${this.date}
         ></date-picker>
 
-        <div id="switch" @click=${this.switchGeod}>
+        <button id="switch" @click=${this.switchGeod}>
           ${unsafeSVG(geoIco)}
 
           <div id="track" ?active=${this.geod}>
@@ -69,7 +69,7 @@ class GeoToEverything extends LitElement {
           </div>
 
           ${unsafeSVG(geodIco)}
-        </div>
+        </button>
 
 
         <label>Time:</label>
@@ -77,7 +77,9 @@ class GeoToEverything extends LitElement {
           value=${this.time}
         ></time-picker>
 
-        <button id="convert-button" @click=${this.sendConvert}>Convert to</button>
+        <button id="convert-button"
+          @click=${this.sendConvert}
+        >Convert ${this.file ? 'file' : ''} to</button>
       </div>
 
 
