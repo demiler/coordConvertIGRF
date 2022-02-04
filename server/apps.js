@@ -206,7 +206,8 @@ class Session {
   async readline() {
     let out = {};
 
-    for (const prog in this.progs) {
+
+    for (const prog of this.progs) {
       const res = await prog.prog.readline();
       if (res === undefined) throw `program ${prog.prog.name} return undefined`;
       utils.filterObject(res, prog.filter, out);
@@ -215,22 +216,26 @@ class Session {
     return out;
   }
 
-  release() {
+  close() {
     this.progs.forEach(prog => prog.prog.close());
   }
 }
 
 class Spawner {
-  progs = [Geo2LBnLLA, Geo2Bigrf, Geo2RDMLLGsmMltShad];
+  static get __progs() {
+    return [Geo2LBnLLA, Geo2Bigrf, Geo2RDMLLGsmMltShad];
+  }
 
-  alloc(filters) {
+  static alloc(filters) {
     const givenProgs = [];
-    for (const progCls in this.progs) {
+
+    for (const progCls of Spawner.__progs) {
       const viableOuts = utils.differ(progCls.outputs, filters);
       if (viableOuts.length > 0) {
         givenProgs.push({ prog: new progCls(), filter: viableOuts });
       }
     }
+
     return new Session(givenProgs);
   }
 };
