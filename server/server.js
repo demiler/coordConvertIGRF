@@ -5,10 +5,13 @@ const path = require('path');
 const readline = require('readline');
 const stream = require('stream');
 const existsSync = require('fs').existsSync;
+const btsize = require('byte-size');
 const utils = require('./utils.js');
 const config = require('./config.js');
+const coords = require('./coords.js');
 const { createSimpleLogger } = require('simple-node-logger');
 
+const { Spawner, Geolla } = require('./apps.js');
 const NTEConvert = require('./norad-to-everything').convert;
 const GTEConvert = require('./geo-to-everything').convert;
 
@@ -25,7 +28,7 @@ for (const prog of Object.values(config.PROGS)) {
     process.exit(1);
   }
 }
-logger.log('Convert programs are accessable');
+logger.info('Convert programs are accessable');
 
 if (!existsSync(path.join(__dirname, config.WS_DIR))) {
   console.error(`Website folder dosen't exsists`);
@@ -36,25 +39,71 @@ if (!existsSync(path.join(__dirname, config.WS_DIR))) {
 app.use('/', express.static(path.join(__dirname, config.WS_DIR)))
 
 app.post('/convert/file', upload.single('file'), async (req, res) => {
+  const fileSize = btsize(req.file.size);
+  logger.info(`Got file to convert [${fileSize.value}${fileSize.unit}]`);
+
+  const filters = JSON.parse(req.body.filters);
+  const geod = JSON.parse(req.body.geod);
 
   const bufferStream = new stream.PassThrough();
   bufferStream.end(req.file.buffer);
+  const rl = readline.createInterface({ input: bufferStream });
 
-  const rl = readline.createInterface({
-    input: bufferStream
-  });
+  const progs = Spawner.alloc(filters);
+  progs.spawn();
 
-  console.log(req.body);
-  console.log('start');
+  let totalLines = 0;
+
+  const geoFTS = { 'geo.X': 'X', 'geo.Y': 'Y', 'geo.Z': 'Z' }; //geo full to short
+  const geosToAdd = utils.differ(Object.keys(geoFTS), filters);
+  const result = Object.fromEntries(
+    [ 'date', 'time', ...geosToAdd, ...filters ]
+    .map(key => [key, []])
+  );
+
   for await (const line of rl) {
-    //console.log(line);
+    const data = line.trim().split(',').map(el => el.trim());
+
+    const dtSplit = data[0].split(' ');
+    const date = dtSplit[0];
+    const time = dtSplit[1];
+
+    const geo = (() => {
+      if (geod) {
+        const crd = coords.lla2geo(Number(data[1]), Number(data[2]), Number(data[3]));
+        return { X: crd[0], Y: crd[1], Z: crd[2] };
+      }
+      return { X: data[1], Y: data[2], Z: data[3] }
+    })();
+
+    progs.writeline(date, time, geo);
+    result['date'].push(date);
+    result['time'].push(time);
+    geosToAdd.forEach(key => result[key].push(geo[geoFTS[key]]));
+
+    totalLines++;
   }
-  console.log('end');
+
+  result.length = totalLines;
 
 
+  try {
+    for (let i = 0; i < totalLines; i++) {
+      const ans = await progs.readline();
+      Object.entries(ans).forEach(([key, val]) => result[key].push(val));
+    }
+  }
+  catch(err) {
+    logger.error('Somethign went wrong while reading results:\n', err);
+    res.status(500).end('Unable to convert data');
+    progs.close();
+    return;
+  }
 
-
-  res.status(400).end('files are not accepted yet');
+  logger.info('File successfuly converted');
+  res.send(JSON.stringify(result));
+  res.status(200).end();
+  progs.close();
 });
 
 app.post('/convert', jsonParser, async (req, res) => {
@@ -66,6 +115,8 @@ app.post('/convert', jsonParser, async (req, res) => {
 
   switch (data.type) {
     case 'nte': //norad to everything
+      //avg geolla line data size: 90 bytes,
+      //if { ((dtEnd - dtStart) / stepSec) * 90 > 1Mb } -> send as file
       outcome = await NTEConvert(data);
       break;
 
