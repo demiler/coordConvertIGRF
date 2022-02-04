@@ -4,6 +4,13 @@ const stringify = s =>
 const filtered = (obj, keys) =>
   keys.reduce((res, key) => ({ ...res, [key]: obj[key] }), {});
 
+const filterObject = (obj, filters, assignObj = {}) =>
+  Object.assign(assignObj, Object.fromEntries(
+    Object.entries(obj).filter(
+      ([key, val]) => filters.includes(key)
+    )
+  ));
+
 const differ = (src, filter) =>
   src.filter(el => filter.includes(el))
 
@@ -21,4 +28,4 @@ const explode = (arr, name, subnames) => {
   );
 };
 
-module.exports = { stringify, filtered, explode, differ };
+module.exports = { stringify, filtered, explode, differ, filterObject };
