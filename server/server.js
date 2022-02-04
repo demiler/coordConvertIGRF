@@ -2,18 +2,14 @@ const bodyParser = require('body-parser');
 const multer = require('multer');
 const express = require('express');
 const path = require('path');
-const readline = require('readline');
-const stream = require('stream');
 const existsSync = require('fs').existsSync;
 const btsize = require('byte-size');
-const utils = require('./utils.js');
 const config = require('./config.js');
-const coords = require('./coords.js');
 const { createSimpleLogger } = require('simple-node-logger');
 
-const { Spawner, Geolla } = require('./apps.js');
 const NTEConvert = require('./norad-to-everything').convert;
 const GTEConvert = require('./geo-to-everything').convert;
+const GTEConvertFile = require('./geo-to-everything').convertFile;
 
 const app = express()
 const upload = multer();
@@ -45,65 +41,16 @@ app.post('/convert/file', upload.single('file'), async (req, res) => {
   const filters = JSON.parse(req.body.filters);
   const geod = JSON.parse(req.body.geod);
 
-  const bufferStream = new stream.PassThrough();
-  bufferStream.end(req.file.buffer);
-  const rl = readline.createInterface({ input: bufferStream });
+  const outcome = await GTEConvertFile({ filters, geod }, req.file);
 
-  const progs = Spawner.alloc(filters);
-  progs.spawn();
-
-  let totalLines = 0;
-
-  const geoFTS = { 'geo.X': 'X', 'geo.Y': 'Y', 'geo.Z': 'Z' }; //geo full to short
-  const geosToAdd = utils.differ(Object.keys(geoFTS), filters);
-  const result = Object.fromEntries(
-    [ 'date', 'time', ...geosToAdd, ...filters ]
-    .map(key => [key, []])
-  );
-
-  for await (const line of rl) {
-    const data = line.trim().split(',').map(el => el.trim());
-
-    const dtSplit = data[0].split(' ');
-    const date = dtSplit[0];
-    const time = dtSplit[1];
-
-    const geo = (() => {
-      if (geod) {
-        const crd = coords.lla2geo(Number(data[1]), Number(data[2]), Number(data[3]));
-        return { X: crd[0], Y: crd[1], Z: crd[2] };
-      }
-      return { X: data[1], Y: data[2], Z: data[3] }
-    })();
-
-    progs.writeline(date, time, geo);
-    result['date'].push(date);
-    result['time'].push(time);
-    geosToAdd.forEach(key => result[key].push(geo[geoFTS[key]]));
-
-    totalLines++;
+  if (outcome.code !== 0) {
+    logger.error(`[${outcome.code}] `, outcome.error);
+    res.status(outcome.code).end(outcome.error);
   }
-
-  result.length = totalLines;
-
-
-  try {
-    for (let i = 0; i < totalLines; i++) {
-      const ans = await progs.readline();
-      Object.entries(ans).forEach(([key, val]) => result[key].push(val));
-    }
+  else {
+    logger.info(`Successfully converted file request`);
+    res.send(outcome.data).end();
   }
-  catch(err) {
-    logger.error('Somethign went wrong while reading results:\n', err);
-    res.status(500).end('Unable to convert data');
-    progs.close();
-    return;
-  }
-
-  logger.info('File successfuly converted');
-  res.send(JSON.stringify(result));
-  res.status(200).end();
-  progs.close();
 });
 
 app.post('/convert', jsonParser, async (req, res) => {

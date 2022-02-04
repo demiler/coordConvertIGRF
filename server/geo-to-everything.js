@@ -1,59 +1,91 @@
 const { gteValidator } = require('./validators.js');
+const stream = require('stream');
+const readline = require('readline');
 const coords = require('./coords.js');
 const launcher = require('./launcher.js');
 const getters = require('./getters.js');
 const utils = require('./utils.js');
+
+const { Spawner } = require('./apps.js');
+
+function coordToGeo(crds, geod) {
+  if (geod) {
+    const geo = coords.lla2geo(crds[0], crds[1], crds[2]);
+    return { 'geo.X': geo[0], 'geo.Y': geo[1], 'geo.Z': geo[2] };
+  }
+  return { 'geo.X': crds[0], 'geo.Y': crds[1], 'geo.Z': crds[2] };
+}
+module.exports.convertFile = async (data, file) => {
+  const bufferStream = new stream.PassThrough();
+  bufferStream.end(file.buffer);
+  const rl = readline.createInterface({ input: bufferStream });
+
+  const progs = Spawner.alloc(data.filters);
+  progs.spawn();
+
+  const geosToAdd = utils.differ(['geo.X', 'geo.Y', 'geo.Z'], data.filters);
+  const result = Object.fromEntries(
+    [ 'date', 'time', ...geosToAdd, ...data.filters ]
+    .map(key => [key, []])
+  );
+
+  let totalLines = 0;
+  for await (const line of rl) {
+    const data = line.trim().split(',').map(el => el.trim());
+
+    const dtSplit = data[0].split(' ');
+    const date = dtSplit[0];
+    const time = dtSplit[1];
+    const geo = coordToGeo(data.slice(1, 4).map(Number), data.geod);
+
+    progs.writeline(date, time, geo);
+    result['date'].push(date);
+    result['time'].push(time);
+    geosToAdd.forEach(key => result[key].push(geo[key]));
+
+    totalLines++;
+  }
+  result.length = totalLines;
+
+  try {
+    for (let i = 0; i < totalLines; i++) {
+      const ans = await progs.readline();
+      Object.entries(ans).forEach(([key, val]) => result[key].push(val));
+    }
+    progs.close();
+    return { code: 0, data: result };
+  }
+  catch(err) {
+    logger.error('Somethign went wrong while reading results:\n', err);
+    progs.close();
+    return { code: 500, error: 'Unable to convert data' };
+  }
+}
 
 module.exports.convert = async (data) => {
   if (!gteValidator(data)) {
     return { code: 403, error: 'data didn\'t pass the validation' }
   }
 
-  let out = {
-    date: [ data.date ],
-    time: [ data.time ],
-  };
+  const progs = Spawner.alloc(data.filters);
+  progs.spawn();
 
-  if (data.geod) {
-    return { code: 400, error: 'geod is not supported yet' };
-  }
+  const geosToAdd = utils.differ(['geo.X', 'geo.Y', 'geo.Z'], data.filters);
+  const result = Object.fromEntries(
+    [ 'date', 'time', ...geosToAdd, ...data.filters ]
+    .map(key => [key, []])
+  );
 
-  let geo = [], lla = [];
-  if (data.geod) {
-    lla = data.coord;
-    geo = coords.lla2geo(lla[0], lla[1], lla[2]);
-  }
-  else {
-    geo = data.coord;
-    //lla = coords.geo2lla(geo[0], geo[1], geo[2]);
-  }
-
-  const glVals = utils.differ(getters['geolla'], data.filters);
-  const glData = {
-    'geo.X':    [geo[0]], 'geo.Y':    [geo[1]], 'geo.Z':    [geo[2]],
-  };
-
-  if (data.geod) {
-    glData['geod.Lat'] = [lla[0]];
-    glData['geod.Lon'] = [lla[1]];
-    glData['geod.Alt'] = [lla[2]];
-    const excludeFilters = ['geod.Lat', 'geod.Lon', 'geod.Alt']
-    data.filters = data.filters.filter(x => !excludeFilters.includes(x))
-  }
-  out = { ...out, ...utils.filtered(glData, glVals) };
+  const geo = coordToGeo(data.coord, data.geod);
+  result['date'].push(data.date);
+  result['time'].push(data.time);
+  geosToAdd.forEach(key => result[key].push(geo[key]));
 
   try {
-    for (const prog in getters) {
-      if (prog === 'geolla') continue;
-      const vals = utils.differ(getters[prog], data.filters);
-      if (vals.length !== 0) {
-        const progOut = await launcher.fromGeo(prog, data.date, data.time, data.coord)
-        out = { ...out, ...utils.filtered(progOut, vals) };
-      }
-    }
-
-    out.length = 1;
-    return { code: 0, data: out };
+    progs.writeline(data.date, data.time, geo);
+    const ans = await progs.readline();
+    Object.entries(ans).forEach(([key, val]) => result[key].push(val));
+    return { code: 0, data: result };
   }
   catch (err) {
     return { code: 500, error: `Something went wrong during GTE convresion: ${err}` };

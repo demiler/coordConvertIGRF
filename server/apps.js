@@ -69,12 +69,11 @@ class ConvProg extends Program {
     return data === undefined ? undefined : data.trim().split(/ +/).map(Number);
   }
 
-  writeline(date, time, geo, replace = true) {
+  writeline(date, time, coords) {
     date = date.replaceAll('-', ' ');
     time = time.replaceAll(':', ' ');
 
-    super.writeline(`${date} ${time} ${geo.X} ${geo.Y} ${geo.Z}`);
-    //super.writeline(`${date} ${time} ${geo[0]} ${geo[1]} ${geo[2]}`);
+    super.writeline(`${date} ${time} ${coords['geo.X']} ${coords['geo.Y']} ${coords['geo.Z']}`);
   }
 }
 
@@ -182,11 +181,13 @@ class Geo2RDMLLGsmMltShad extends ConvProg {
     };
   }
 
-  writeline(date, time, geo) {
+  writeline(date, time, coords) {
     const hms = time.split(':').map(Number);
     const ut = hms[0] + hms[1] / 60.0 + hms[2] / 3600.0;
     date = date.replaceAll('-', ' ');
-    this.__handle.stdin.write(`${ut} ${date} ${geo.X} ${geo.Y} ${geo.Z}\n`);
+    this.__handle.stdin.write(
+      `${ut} ${date} ${coords['geo.X']} ${coords['geo.Y']} ${coords['geo.Z']}\n`
+    );
   }
 }
 
