@@ -29,14 +29,10 @@ module.exports.convert = async (data) => {
     while (glData !== undefined) {
       totalLines++;
 
-      const date = glData['date'];
-      const time = glData['time'];
-      const geo = { X: glData['geo.X'], Y: glData['geo.Y'], Z: glData['geo.Z'] };
-
-      result['date'].push(date);
+      result['date'].push(glData['date']);
       result['time'].push(glData['time']);
       geosToAdd.forEach(geo => result[geo].push(glData[geo]));
-      progs.writeline(date, time, geo);
+      progs.writeline(glData['date'], glData['time'], glData);
 
       glData = await glProg.readline();
     }
