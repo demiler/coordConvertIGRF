@@ -79,18 +79,14 @@ class Geolla extends Program {
     const time = dtSplit[1];
 
     return {
-      date,
-      time,
-      geo: {
-        X: Number(data[1]),
-        Y: Number(data[2]),
-        Z: Number(data[3])
-      },
-      geod: {
-        Lat: Number(data[4]),
-        Lon: Number(data[5]),
-        Alt: Number(data[6])
-      }
+      date, //yyyy-mm-dd
+      time, //hh:mm:ss
+      'geo.X': Number(data[1]),
+      'geo.Y': Number(data[2]),
+      'geo.Z': Number(data[3])
+      'geod.Lat': Number(data[4]),
+      'geod.Lon': Number(data[5]),
+      'geod.Alt': Number(data[6])
     }
   }
 
@@ -129,11 +125,11 @@ class Geo2LBnLLA extends ConvProg {
   async readline() {
     const data = await super.readline();
     return data === undefined ? undefined : {
-      l: data[0],
-      b: data[1],
-      Lat: data[2],
-      Lon: data[3],
-      Alt: data[4]
+      'l': data[0],
+      'b': data[1],
+      'geod.Lat': data[2],
+      'geod.Lon': data[3],
+      'geod.Alt': data[4]
     };
   }
 }
@@ -146,12 +142,10 @@ class Geo2Bigrf extends ConvProg {
   async readline() {
     const data = await super.readline();
     return data === undefined ? undefined : {
-      magn: {
-        X: data[0],
-        Y: data[1],
-        Z: data[2],
-        F: data[3]
-      }
+      'magn.X': data[0],
+      'magn.Y': data[1],
+      'magn.Z': data[2],
+      'magn.F': data[3]
     }
   }
 }
@@ -164,10 +158,9 @@ class Geo2RDMLLGsmMltShad extends ConvProg {
   async readline() {
     const data = await super.readline();
     return data === undefined ? undefined : {
-      dm:   { R: data[0], Lat: data[1], Lon: data[2] },
-      gsm:  { X: data[3], Y: data[4], Z: data[5] },
-      mlt:  data[6],
-      shad: data[7],
+      'dm.R':  data[0], 'dm.Lat': data[1], 'dm.Lon': data[2],
+      'gsm.X': data[3], 'gsm.Y':  data[4], 'gsm.Z':  data[5],
+      'mlt':   data[6], 'shad':   data[7],
     };
   }
 
@@ -180,50 +173,3 @@ class Geo2RDMLLGsmMltShad extends ConvProg {
 }
 
 module.exports = { Program, Geolla, Geo2LBnLLA, Geo2Bigrf, Geo2RDMLLGsmMltShad };
-
-//class Spawner {
-  //constructor(closeTimeout, maxInsts) {
-    //this.paths = {};
-    //for (const name in config.PROGS) {
-      //this.paths[name] = path.join(progsDir, config.PROGS[name]);
-    //}
-
-    //this.closeTimeout = closeTimeout;
-    //this.maxInsts = maxInsts;
-    //this.alive = {};
-    //for (const name in this.paths) this.alive[name] = [];
-  //}
-
-  //allocProgs(names) {
-    //ses = Session(this);
-
-    //for (const name in names) {
-      //if (this.alive[name].length > 0) {
-        //timer = this.alive[name].pop();
-        //clearTimeout(timer.timeout);
-        //ses.add(timer.prog);
-      //}
-      //else {
-        //prog = Program(this.paths[name], name);
-        //prog.spawn();
-        //ses.add(prog);
-      //}
-    //}
-
-    //return ses;
-  //}
-
-  //_free(ses) {
-    //for (const prog in ses.progs) {
-      //if (prog.name == 'geolla' || this.alive[prog.name].length >= this.maxInsts) {
-        //prog.close();
-      //}
-      //else {//BUG timeout wont pop dead item automatically!!!
-        //this.alive[prog.name].append({
-          //prog,
-          //timeout: setTimeout(prog.close, this.closeTimeout),
-        //})
-      //}
-    //}
-  //}
-//}
