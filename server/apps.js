@@ -11,6 +11,8 @@ const execFile = promisify(require('child_process').execFile);
 const progsDir = path.join(__dirname, config.PROG_DIR);
 
 class Program {
+  static get outputs() {}
+
   constructor(path, name, progTimeout = 2000) {
     this.__handle = undefined;
     this.path = path;
@@ -53,7 +55,34 @@ class Program {
   }
 }
 
+class ConvProg extends Program {
+  constructor(configName, shortName) {
+    super('./' + config.PROGS[configName], shortName);
+  }
+
+  spawn() {
+    super.spawn([], { cwd: progsDir });
+  }
+
+  async readline() {
+    const data = await super.readline();
+    return data === undefined ? undefined : data.trim().split(/ +/).map(Number);
+  }
+
+  writeline(date, time, geo, replace = true) {
+    date = date.replaceAll('-', ' ');
+    time = time.replaceAll(':', ' ');
+
+    super.writeline(`${date} ${time} ${geo.X} ${geo.Y} ${geo.Z}`);
+    //super.writeline(`${date} ${time} ${geo[0]} ${geo[1]} ${geo[2]}`);
+  }
+}
+
 class Geolla extends Program {
+  static get outputs() {
+    return ['date', 'time', 'geo.X', 'geo.Y', 'geo.Z'];//, 'geod.Lat', 'geod.Lon', 'geod.Alt'];
+  };
+
   constructor() {
     super('./' + config.PROGS['geolla'], 'geolla');
     this.removeFirst = true;
@@ -83,7 +112,7 @@ class Geolla extends Program {
       time, //hh:mm:ss
       'geo.X': Number(data[1]),
       'geo.Y': Number(data[2]),
-      'geo.Z': Number(data[3])
+      'geo.Z': Number(data[3]),
       'geod.Lat': Number(data[4]),
       'geod.Lon': Number(data[5]),
       'geod.Alt': Number(data[6])
@@ -94,30 +123,11 @@ class Geolla extends Program {
   close(){} //not used, program exists automatically
 }
 
-class ConvProg extends Program {
-  constructor(configName, shortName) {
-    super('./' + config.PROGS[configName], shortName);
-  }
-
-  spawn() {
-    super.spawn([], { cwd: progsDir });
-  }
-
-  async readline() {
-    const data = await super.readline();
-    return data === undefined ? undefined : data.trim().split(/ +/).map(Number);
-  }
-
-  writeline(date, time, geo, replace = true) {
-    date = date.replaceAll('-', ' ');
-    time = time.replaceAll(':', ' ');
-
-    super.writeline(`${date} ${time} ${geo.X} ${geo.Y} ${geo.Z}`);
-    //super.writeline(`${date} ${time} ${geo[0]} ${geo[1]} ${geo[2]}`);
-  }
-}
-
 class Geo2LBnLLA extends ConvProg {
+  static get outputs() {
+    return ['l', 'b', 'geod.Lat', 'geod.Lon', 'geod.Alt'];
+  }
+
   constructor() {
     super('geo2LB_Lat_Lon_Alt', 'geo2LBnLLA');
   }
@@ -135,6 +145,10 @@ class Geo2LBnLLA extends ConvProg {
 }
 
 class Geo2Bigrf extends ConvProg {
+  static get outputs() {
+    return ['magn.X', 'magn.Y', 'magn.Z', 'magn.F']
+  }
+
   constructor() {
     super('geo2BigrfOnly', 'geo2bigrf');
   }
@@ -151,6 +165,10 @@ class Geo2Bigrf extends ConvProg {
 }
 
 class Geo2RDMLLGsmMltShad extends ConvProg {
+  static get outputs() {
+    return ['dm.R', 'dm.Lat', 'dm.Lon', 'gsm.X', 'gsm.Y', 'gsm.Z', 'mlt', 'shad'];
+  }
+
   constructor() {
     super('geo2RDMLLGsmMltShadOnly', 'geo2RDM_GSM_mlt_shad');
   }
@@ -172,4 +190,49 @@ class Geo2RDMLLGsmMltShad extends ConvProg {
   }
 }
 
-module.exports = { Program, Geolla, Geo2LBnLLA, Geo2Bigrf, Geo2RDMLLGsmMltShad };
+class Session {
+  constructor(progs) {
+    this.progs = progs;
+  }
+
+  spawn() {
+    this.progs.forEach(prog => prog.prog.spawn());
+  }
+
+  writeline(...data) {
+    this.progs.forEach(prog => prog.prog.writeline(...data));
+  }
+
+  async readline() {
+    let out = {};
+
+    for (const prog in this.progs) {
+      const res = await prog.prog.readline();
+      if (res === undefined) throw `program ${prog.prog.name} return undefined`;
+      utils.filterObject(res, prog.filter, out);
+    }
+
+    return out;
+  }
+
+  release() {
+    this.progs.forEach(prog => prog.prog.close());
+  }
+}
+
+class Spawner {
+  progs = [Geo2LBnLLA, Geo2Bigrf, Geo2RDMLLGsmMltShad];
+
+  alloc(filters) {
+    const givenProgs = [];
+    for (const progCls in this.progs) {
+      const viableOuts = utils.differ(progCls.outputs, filters);
+      if (viableOuts.length > 0) {
+        givenProgs.push({ prog: new progCls(), filter: viableOuts });
+      }
+    }
+    return new Session(givenProgs);
+  }
+};
+
+module.exports = { Spawner, Geolla, Geo2LBnLLA, Geo2Bigrf, Geo2RDMLLGsmMltShad };
