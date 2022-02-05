@@ -45,7 +45,12 @@ app.post('/convert/file', upload.single('file'), async (req, res) => {
 
   if (outcome.code !== 0) {
     logger.error(`[${outcome.code}] `, outcome.error);
-    res.status(outcome.code).end(outcome.error);
+    if (outcome.code === 500) { //program timeout
+      res.status(outcome.code).end(`unable to convert line ${outcome.errorLine}: program timed out`);
+    }
+    else {
+      res.status(outcome.code).end(outcome.error);
+    }
   }
   else {
     logger.info(`Successfully converted file request`);
@@ -84,7 +89,7 @@ app.post('/convert', jsonParser, async (req, res) => {
   }
   else if (outcome.code !== 0) {
     logger.error(`[${outcome.code}] `, outcome.error);
-    res.status(outcome.code).end(outcome.error);
+    res.status(outcome.code).end(`Unable to convert data: ${outcome.error}`);
   }
   else {
     logger.info(`Successfully converted ${data.type} type request`);

@@ -47,8 +47,10 @@ module.exports.convertFile = async (data, file) => {
   }
   result.length = totalLines;
 
+  let errorLine = 0;
   try {
     for (let i = 0; i < totalLines; i++) {
+      errorLine = i + 1;
       const ans = await progs.readline();
       Object.entries(ans).forEach(([key, val]) => result[key].push(val));
     }
@@ -56,9 +58,8 @@ module.exports.convertFile = async (data, file) => {
     return { code: 0, data: result };
   }
   catch(err) {
-    logger.error('Somethign went wrong while reading results:\n', err);
     progs.close();
-    return { code: 500, error: 'Unable to convert data' };
+    return { code: 500, error: err, errorLine };
   }
 }
 
