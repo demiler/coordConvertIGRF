@@ -1,0 +1,103 @@
+:host {
+  --border: 1px solid black;
+  --radius: 8px;
+  display: block;
+  margin: 0 auto;
+  width: fit-content;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+#info-bar {
+  margin-bottom: 10px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+}
+
+#info-bar #size-warning {
+  background-color: #fed29b;
+  padding: 5px;
+  border-radius: var(--radius);
+  width: fit-content;
+  margin: 0 10px;
+}
+
+#info-bar #download-btn {
+  margin-left: auto;
+  width: fit-content;
+  border: none;
+  font: inherit;
+
+  border-radius: var(--radius);
+  padding: 5px;
+  background-color: var(--color-inactive);
+  cursor: pointer;
+}
+
+#info-bar #download-btn:active {
+  background-color: var(--color-active);
+}
+
+table {
+  display: block;
+  max-width: calc(100vw - 100px);
+  overflow-x: auto;
+  border-spacing: 0;
+  max-height: 50vh;
+  margin: 0 auto;
+  width: fit-content;
+  border-radius: var(--radius);
+  border: var(--border);
+}
+
+th, td {
+  padding: 4px;
+  border-left: var(--border);
+  white-space: nowrap;
+}
+
+td:first-child {
+  border-left: none;
+}
+
+th:last-child, td:last-child {
+  border-right: var(--border);
+}
+
+th:first-child {
+  border-top-left-radius:  var(--radius);
+  border-left: none;
+}
+
+tr:last-child td:first-child {
+  border-bottom-left-radius:  var(--radius);
+}
+
+tr:nth-child(odd) {
+  background-color: #e8e8e8;
+}
+
+th {
+  background-color: #5d5d5d;
+  color: white;
+  border-bottom: var(--border);
+  position: sticky;
+  top: 0;
+}
+
+table::-webkit-scrollbar {
+  width: 10px;
+}
+
+table::-webkit-scrollbar-track {
+  background-color: #ddd;
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+table::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #999;
+}

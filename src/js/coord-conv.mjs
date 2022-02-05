@@ -1,9 +1,9 @@
 import { html, LitElement } from 'lit-element';
-import { transition, slide } from 'lit-transition';
 import style from '../css/coord-conv.css';
 import './norad-to-everything.mjs';
 import './geo-to-everything.mjs';
 import './norad-to-geo.mjs';
+import './data-table.mjs';
 
 class CoordConv extends LitElement {
   static get styles() {
@@ -46,20 +46,8 @@ class CoordConv extends LitElement {
         </div>
       </main>
 
-      <table id="table">
-        <tr class='header'>
-          ${Object.keys(this.table).map(th => (th === 'length') ? html`` : html`
-            <th class="table-${th}">${th}</th>
-          `)}
-        </tr>
-        ${[...Array(this.table.length).keys()].map(i => html`
-          <tr>
-            ${Object.entries(this.table).map(cell => (cell[0] === 'length') ?html``:html`
-            <td class="table-${cell[0]}">${(cell[1][i] !== null) ? cell[1][i] : 'NaN'}</td>
-          `)}
-          </tr>
-        `)}
-      </table>
+      <!--<data-table .table=${this.table}></data-table> set this back after testing!!!!!-->
+      <data-table .table=${this.table}></data-table>
     `;
   }
 
@@ -103,6 +91,8 @@ class CoordConv extends LitElement {
         if (!data.time[1]) data.time[1] = currDT[1];
       }
 
+      console.log('sending:', data);
+
       fetchResponse = fetch(`${window.location.href}convert`, {
         method: 'POST',
         headers: {
@@ -123,6 +113,12 @@ class CoordConv extends LitElement {
 
         case 200:
           this.table = await res.json();
+
+
+          //REMOVE AFTER TESTING!!!!!!
+          if (this.table.length < 120) localStorage.setItem('table', JSON.stringify(this.table));
+
+
           break;
 
         default:

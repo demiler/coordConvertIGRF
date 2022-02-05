@@ -11,3 +11,18 @@ export const clamp = (min, max, val) => {
 export const isObject = (obj) => {
   return typeof obj === 'object' && !Array.isArray(obj) && obj !== null
 }
+
+class emptyIteratable {
+  constructor(length) {
+    this.length = length;
+  }
+
+  map(cb) {
+    const res = [];
+    for (let i = 0; i < this.length; i++)
+      res.push(cb(i));
+    return res;
+  }
+};
+
+export const Iterate = (length) => new emptyIteratable(length);

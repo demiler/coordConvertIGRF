@@ -61,7 +61,7 @@ class GeoToEverything extends LitElement {
           value=${this.date}
         ></date-picker>
 
-        <button id="switch" @click=${this.switchGeod}>
+        <button id="switch" @click=${this.switchGeod} title="GEO / GEOD">
           ${unsafeSVG(geoIco)}
 
           <div id="track" ?active=${this.geod}>

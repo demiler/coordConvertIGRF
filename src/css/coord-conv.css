@@ -68,24 +68,6 @@ nav button:focus-visible {
   opacity: 1;
 }
 
-table {
-  display: block;
-  width: fit-content;
-  margin: 0 auto;
-  max-width: calc(100vw - 100px);
-  overflow-x: auto;
-  border-collapse: collapse;
-}
-
-th, td {
-  border: 1px solid black;
-  padding: 4px;
-}
-
-th {
-  background-color: var(--color-inactive);
-}
-
 .table-date {
   white-space: nowrap;
 }
