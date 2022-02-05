@@ -76,6 +76,7 @@ module.exports.convert = async (data) => {
     [ 'date', 'time', ...geosToAdd, ...data.filters ]
     .map(key => [key, []])
   );
+  result.length = 1;
 
   const geo = coordToGeo(data.coord, data.geod);
   result['date'].push(data.date);
